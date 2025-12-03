@@ -69,6 +69,7 @@ export function ResponsiveNavLayout({
   const activeItem = navItems.find(item => item.url === pathname) || navItems[0]
 
   return (
+    <>
     <SidebarProvider>
       <div className="mobile-bottom-nav-spacing sidebar-layout">
         {/* Desktop Sidebar */}
@@ -189,8 +190,9 @@ export function ResponsiveNavLayout({
             </main>
           </div>
       </div>
-
-      <MobileBottomNav navItems={navItems} />
     </SidebarProvider>
+
+    <MobileBottomNav navItems={navItems} />
+    </>
   )
 }
