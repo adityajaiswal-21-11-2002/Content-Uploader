@@ -178,7 +178,8 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
                 <CardDescription>Detailed breakdown for each employee</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead className="bg-muted/50">
                       <tr>
@@ -218,6 +219,40 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
                       })}
                     </tbody>
                   </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden space-y-4">
+                  {dailyComparisonData.map((emp, idx) => (
+                    <Card key={idx} className="w-full">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="font-semibold text-foreground">{emp.fullName}</h3>
+                          <span className="text-sm text-muted-foreground">Avg: {emp.avgPerDay}/day</span>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="text-center p-3 rounded-lg bg-red-50 dark:bg-red-950/30">
+                            <Youtube className="w-5 h-5 text-red-500 mx-auto mb-1" />
+                            <div className="text-lg font-bold text-red-600 dark:text-red-400">{emp.youtube}</div>
+                            <div className="text-xs text-red-600 dark:text-red-400">YouTube</div>
+                          </div>
+
+                          <div className="text-center p-3 rounded-lg bg-pink-50 dark:bg-pink-950/30">
+                            <Instagram className="w-5 h-5 text-pink-500 mx-auto mb-1" />
+                            <div className="text-lg font-bold text-pink-600 dark:text-pink-400">{emp.instagram}</div>
+                            <div className="text-xs text-pink-600 dark:text-pink-400">Instagram</div>
+                          </div>
+
+                          <div className="text-center p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30">
+                            <TrendingUp className="w-5 h-5 text-blue-500 mx-auto mb-1" />
+                            <div className="text-lg font-bold text-blue-600 dark:text-blue-400">{emp.total}</div>
+                            <div className="text-xs text-blue-600 dark:text-blue-400">Total</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </CardContent>
             </Card>

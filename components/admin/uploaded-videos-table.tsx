@@ -144,8 +144,8 @@ export default function UploadedVideosTable() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="border rounded-lg overflow-hidden">
+      {/* Desktop Table View */}
+      <div className="hidden md:block border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
@@ -214,6 +214,72 @@ export default function UploadedVideosTable() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {filteredVideos.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            No videos found. Try adjusting your filters.
+          </div>
+        ) : (
+          filteredVideos.map((video) => (
+            <Card key={video.id} className="w-full">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    {video.platform === "youtube" ? (
+                      <Youtube className="w-5 h-5 text-red-500" />
+                    ) : (
+                      <Instagram className="w-5 h-5 text-pink-500" />
+                    )}
+                    <div>
+                      <p className="font-medium text-foreground">{video.employee_name}</p>
+                      <p className="text-xs text-muted-foreground">{video.employee_email}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{formatDate(video.date)}</span>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-medium text-foreground mb-1">Topic</p>
+                    <p className="text-sm text-muted-foreground">{video.topic}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-medium text-foreground mb-1">Platform</p>
+                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                      video.platform === "youtube"
+                        ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                        : "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200"
+                    }`}>
+                      {video.platform === "youtube" ? (
+                        <Youtube className="w-3 h-3" />
+                      ) : (
+                        <Instagram className="w-3 h-3" />
+                      )}
+                      {video.platform === "youtube" ? "YouTube" : "Instagram"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-medium text-foreground mb-1">Video Link</p>
+                    <a
+                      href={video.video_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors text-sm break-all"
+                    >
+                      {video.video_link}
+                      <ExternalLink className="w-3 h-3 shrink-0" />
+                    </a>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
       {/* Pagination info */}
