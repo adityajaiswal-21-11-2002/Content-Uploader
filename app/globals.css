@@ -386,6 +386,38 @@
     animation: bounceGentle 2s infinite;
   }
 
+  /* Custom sidebar layout */
+  .sidebar-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar-desktop {
+    width: 16rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: hsl(var(--sidebar));
+    border-right: 1px solid hsl(var(--sidebar-border));
+    z-index: 10;
+  }
+
+  .main-content {
+    flex: 1;
+    margin-left: 16rem;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar-desktop {
+      display: none;
+    }
+
+    .main-content {
+      margin-left: 0;
+    }
+  }
+
   /* Safe area support for mobile devices */
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom);

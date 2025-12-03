@@ -4,18 +4,15 @@ import React, { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  Sidebar,
+  SidebarHeader,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
-  SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -73,126 +70,126 @@ export function ResponsiveNavLayout({
 
   return (
     <SidebarProvider>
-      <div className="mobile-bottom-nav-spacing w-full">
-        <Sidebar variant="inset">
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
-                <Link href="/">
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <BarChart3 className="size-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{title}</span>
-                    <span className="truncate text-xs text-sidebar-foreground/70">{subtitle}</span>
-                  </div>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={pathname === item.url}
-                      tooltip={item.title}
-                    >
-                      <Link href={item.url}>
-                        <item.icon className="size-4" />
-                        <span>{item.title}</span>
+      <div className="mobile-bottom-nav-spacing sidebar-layout">
+        {/* Desktop Sidebar */}
+        <div className="sidebar-desktop">
+              <SidebarHeader className="p-4">
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton size="lg" asChild>
+                      <Link href="/">
+                        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                          <BarChart3 className="size-4" />
+                        </div>
+                        <div className="grid flex-1 text-left text-sm leading-tight">
+                          <span className="truncate font-semibold">{title}</span>
+                          <span className="truncate text-xs text-sidebar-foreground/70">{subtitle}</span>
+                        </div>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+                </SidebarMenu>
+              </SidebarHeader>
 
-          {stats && (
-            <SidebarGroup>
-              <SidebarGroupContent>
-                <div className="px-2 py-1">
-                  <div className="text-xs font-medium text-sidebar-foreground/70 mb-2">
-                    Today's Status
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="size-3 text-green-500" />
-                        <span className="text-xs">Compliant</span>
-                      </div>
-                      <Badge variant="secondary" className="text-xs">
-                        {stats.compliant}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <AlertCircle className="size-3 text-red-500" />
-                        <span className="text-xs">Not Compliant</span>
-                      </div>
-                      <Badge variant="secondary" className="text-xs">
-                        {stats.nonCompliant}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Users className="size-3 text-blue-500" />
-                        <span className="text-xs">Total</span>
-                      </div>
-                      <Badge variant="secondary" className="text-xs">
-                        {stats.total}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )}
-        </SidebarContent>
+              <SidebarContent className="flex-1 px-2">
+                <SidebarGroup>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {navItems.map((item) => (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton
+                            asChild
+                            isActive={pathname === item.url}
+                          >
+                            <Link href={item.url} className="w-full">
+                              <item.icon className="size-4" />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
 
-        <SidebarFooter>
-          {showBackToMain && (
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/">
-                    <Home className="size-4" />
-                    <span>Back to Main</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          )}
-          {footerContent}
-        </SidebarFooter>
-      </Sidebar>
+                {stats && (
+                  <SidebarGroup>
+                    <SidebarGroupContent>
+                      <div className="px-2 py-1">
+                        <div className="text-xs font-medium text-sidebar-foreground/70 mb-2">
+                          Today's Status
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className="size-3 text-green-500" />
+                              <span className="text-xs">Compliant</span>
+                            </div>
+                            <Badge variant="secondary" className="text-xs">
+                              {stats.compliant}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <AlertCircle className="size-3 text-red-500" />
+                              <span className="text-xs">Not Compliant</span>
+                            </div>
+                            <Badge variant="secondary" className="text-xs">
+                              {stats.nonCompliant}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Users className="size-3 text-blue-500" />
+                              <span className="text-xs">Total</span>
+                            </div>
+                            <Badge variant="secondary" className="text-xs">
+                              {stats.total}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                )}
+              </SidebarContent>
 
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 hardware-accelerated">
-          <div className="flex items-center gap-2 px-4 container-modern">
-            <SidebarTrigger className="-ml-1 focus-ring-enhanced touch-target" />
-            <div className="h-4 w-px bg-sidebar-border" />
-            <div className="flex items-center gap-2">
-              {activeItem.icon && <activeItem.icon className="size-4 animate-scale-in" />}
-              <span className="font-semibold responsive-text fluid-text-base">{activeItem.title}</span>
+              <SidebarFooter className="p-4">
+                {showBackToMain && (
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <Link href="/">
+                          <Home className="size-4" />
+                          <span>Back to Main</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                )}
+                {footerContent}
+              </SidebarFooter>
             </div>
           </div>
-        </header>
 
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 w-full animate-fade-in">
-          {headerContent}
-          <div className="min-h-[100vh] flex-1 md:min-h-min">
-            {children}
+          {/* Main Content */}
+          <div className="main-content">
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4 md:px-6">
+              <div className="flex items-center gap-2">
+                {activeItem.icon && <activeItem.icon className="size-4" />}
+                <span className="font-semibold fluid-text-base">{activeItem.title}</span>
+              </div>
+            </header>
+
+            <main className="flex-1 p-4 md:p-6">
+              {headerContent}
+              <div className="space-y-6">
+                {children}
+              </div>
+            </main>
           </div>
         </div>
-      </SidebarInset>
+
         <MobileBottomNav navItems={navItems} />
       </div>
     </SidebarProvider>
