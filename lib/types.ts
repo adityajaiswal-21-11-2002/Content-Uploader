@@ -27,6 +27,16 @@ export interface Upload {
   created_at?: Date
 }
 
+// Extra uploads beyond the mandatory daily ones
+export interface ExtraUpload {
+  id?: string
+  employee_id: number
+  platform: "youtube" | "instagram"
+  date: string // YYYY-MM-DD
+  video_link: string
+  created_at?: Date
+}
+
 export interface WeeklyReport {
   id?: string
   week: string // Week start date (YYYY-MM-DD)

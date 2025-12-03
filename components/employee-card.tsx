@@ -46,7 +46,7 @@ export default function EmployeeCard({ employee, complianceSummary }: EmployeeCa
     return () => clearInterval(interval)
   }, [employee.id])
 
-  const quota = getRequiredQuota(employee.role)
+  const quota = getRequiredQuota(employee.role, employee)
   const isYoutubeRequired = quota.youtube > 0
   const isInstaRequired = quota.insta > 0
 

@@ -21,7 +21,9 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
   const [loading, setLoading] = useState(true)
   const [selectedDays, setSelectedDays] = useState(30)
   const [selectedWeeks, setSelectedWeeks] = useState(8)
-  const [selectedMonth, setSelectedMonth] = useState("")
+  // Use a non-empty sentinel value for the "current month" option so that
+  // the underlying Select implementation never receives an empty string.
+  const [selectedMonth, setSelectedMonth] = useState("current")
 
   useEffect(() => {
     fetchData()
@@ -52,7 +54,9 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
       }
 
       // Fetch monthly data
-      const monthlyUrl = `/api/analytics/monthly${selectedMonth ? `?month=${selectedMonth}` : ""}`
+      const monthParam =
+        selectedMonth && selectedMonth !== "current" ? `?month=${selectedMonth}` : ""
+      const monthlyUrl = `/api/analytics/monthly${monthParam}`
       const monthlyResponse = await fetch(monthlyUrl)
       if (monthlyResponse.ok) {
         const monthly = await monthlyResponse.json()
@@ -321,7 +325,7 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
                   <SelectValue placeholder="Select month" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Current Month</SelectItem>
+                  <SelectItem value="current">Current Month</SelectItem>
                   {Array.from({ length: 6 }, (_, i) => {
                     const date = new Date()
                     date.setMonth(date.getMonth() - i)

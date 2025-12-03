@@ -39,7 +39,7 @@ export default function WeeklyProgress({ employee }: WeeklyProgressProps) {
     fetchData()
   }, [employee.id])
 
-  const quota = getRequiredQuota(employee.role)
+  const quota = getRequiredQuota(employee.role, employee)
   const youtubeCount = weeklyStats?.youtube_count || 0
   const instaCount = weeklyStats?.insta_count || 0
 

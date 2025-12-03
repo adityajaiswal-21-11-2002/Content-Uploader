@@ -15,12 +15,20 @@ interface MonthlyAnalyticsProps {
 export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalyticsProps) {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [selectedMonth, setSelectedMonth] = useState(month || "")
+  // Use a non-empty sentinel value for the "current month" option so that
+  // the underlying Select implementation never receives an empty string.
+  const [selectedMonth, setSelectedMonth] = useState(month || "current")
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = `/api/analytics/monthly${employeeId ? `?employeeId=${employeeId}` : ""}${selectedMonth ? `&month=${selectedMonth}` : ""}`
+        const base = `/api/analytics/monthly`
+        const params = new URLSearchParams()
+        if (employeeId) params.set("employeeId", String(employeeId))
+        if (selectedMonth && selectedMonth !== "current") {
+          params.set("month", selectedMonth)
+        }
+        const url = `${base}${params.toString() ? `?${params.toString()}` : ""}`
         const response = await fetch(url)
         if (response.ok) {
           const result = await response.json()
@@ -123,7 +131,7 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
             <SelectValue placeholder="Select month" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Current Month</SelectItem>
+            <SelectItem value="current">Current Month</SelectItem>
             {monthOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}

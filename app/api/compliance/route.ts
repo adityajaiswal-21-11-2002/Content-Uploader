@@ -43,7 +43,7 @@ export async function GET() {
 
         const dailyCompliant = dailyUpload && checkDailyCompliance(emp, dailyUpload)
         const weeklyCompliant = weeklyStats && checkWeeklyCompliance(emp, weeklyStats)
-        const quota = getRequiredQuota(emp.role)
+        const quota = getRequiredQuota(emp.role, emp as any)
 
         return {
           employee: { id: emp.id, name: emp.name, role: emp.role, email: emp.email },

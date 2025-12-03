@@ -74,6 +74,7 @@ export async function GET(request: Request) {
     // Build video list
     const videos: any[] = []
 
+    // Mandatory (daily) uploads
     dailyUploads.forEach((upload) => {
       const employee = employeeMap.get(upload.employee_id)
       if (!employee) return
@@ -112,6 +113,40 @@ export async function GET(request: Request) {
             created_at: upload.created_at || upload.updated_at,
           })
         }
+      }
+    })
+
+    // Extra uploads beyond mandatory ones
+    const extraQuery: any = {
+      date: { $gte: startDateStr, $lte: endDateStr },
+    }
+
+    if (employeeIdParam) {
+      extraQuery.employee_id = Number.parseInt(employeeIdParam)
+    }
+
+    const extraUploads = await db
+      .collection("extra_uploads")
+      .find(extraQuery)
+      .sort({ date: -1, employee_id: 1, created_at: -1 })
+      .toArray()
+
+    extraUploads.forEach((upload) => {
+      const employee = employeeMap.get(upload.employee_id)
+      if (!employee) return
+
+      if (!platformParam || platformParam === upload.platform) {
+        videos.push({
+          id: `${upload.employee_id}-${upload.date}-${upload.platform}-extra-${upload._id?.toString()}`,
+          employee_id: upload.employee_id,
+          employee_name: employee.name,
+          employee_email: employee.email,
+          platform: upload.platform,
+          date: upload.date,
+          video_link: upload.video_link,
+          topic: "Extra video",
+          created_at: upload.created_at,
+        })
       }
     })
 

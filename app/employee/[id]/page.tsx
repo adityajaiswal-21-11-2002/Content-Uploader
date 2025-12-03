@@ -58,6 +58,10 @@ export default function EmployeeDashboardPage() {
   const [refreshKey, setRefreshKey] = useState(0) // Key to force refresh of DailyTrackingCalendar
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null) // Selected topic ID for input
   const [videoLinkInputs, setVideoLinkInputs] = useState<Record<string, string>>({}) // Video links by topic ID
+  const [extraPlatform, setExtraPlatform] = useState<"youtube" | "instagram">("youtube")
+  const [extraVideoLink, setExtraVideoLink] = useState("")
+  const [extraDate, setExtraDate] = useState<string>(() => formatDateISO(new Date()))
+  const [savingExtra, setSavingExtra] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -197,6 +201,49 @@ export default function EmployeeDashboardPage() {
     }
   }
 
+  const handleAddExtraUpload = async () => {
+    if (!extraVideoLink.trim()) {
+      toast.error("Please enter the video link")
+      return
+    }
+
+    try {
+      new URL(extraVideoLink.trim())
+    } catch {
+      toast.error("Please enter a valid URL for the video link")
+      return
+    }
+
+    setSavingExtra(true)
+    try {
+      const response = await fetch("/api/upload/extra", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          employee_id: Number.parseInt(employeeId),
+          platform: extraPlatform,
+          video_link: extraVideoLink.trim(),
+          date: extraDate,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error || errorData.details || "Failed to save extra upload"
+        throw new Error(errorMessage)
+      }
+
+      toast.success("Extra upload saved successfully")
+      setExtraVideoLink("")
+      setExtraDate(formatDateISO(new Date()))
+    } catch (error: any) {
+      console.error("Error saving extra upload:", error)
+      toast.error(error?.message || "Failed to save extra upload")
+    } finally {
+      setSavingExtra(false)
+    }
+  }
+
   if (loading || !employee) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -205,7 +252,7 @@ export default function EmployeeDashboardPage() {
     )
   }
 
-  const quota = getRequiredQuota(employee.role)
+  const quota = getRequiredQuota(employee.role, employee)
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -532,6 +579,85 @@ export default function EmployeeDashboardPage() {
                   <Clock className="w-3 h-3" />
                   <span>Compliance checks run every night at 11:59 PM.</span>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Extra uploads section */}
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Extra Videos</CardTitle>
+                <CardDescription>
+                  Log additional YouTube or Instagram videos beyond today&apos;s mandatory topics.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Platform</Label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant={extraPlatform === "youtube" ? "default" : "outline"}
+                      className="flex-1 gap-2"
+                      onClick={() => setExtraPlatform("youtube")}
+                    >
+                      <Youtube className="w-4 h-4 text-red-500" />
+                      YouTube
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={extraPlatform === "instagram" ? "default" : "outline"}
+                      className="flex-1 gap-2"
+                      onClick={() => setExtraPlatform("instagram")}
+                    >
+                      <Instagram className="w-4 h-4 text-pink-500" />
+                      Instagram
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="extra-date" className="text-sm font-medium">
+                    Date
+                  </Label>
+                  <Input
+                    id="extra-date"
+                    type="date"
+                    value={extraDate}
+                    onChange={(e) => setExtraDate(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="extra-video-link" className="text-sm font-medium">
+                    Video link
+                  </Label>
+                  <Input
+                    id="extra-video-link"
+                    type="url"
+                    placeholder={
+                      extraPlatform === "youtube"
+                        ? "https://www.youtube.com/watch?v=..."
+                        : "https://www.instagram.com/reel/..."
+                    }
+                    value={extraVideoLink}
+                    onChange={(e) => setExtraVideoLink(e.target.value)}
+                    disabled={savingExtra}
+                  />
+                </div>
+
+                <Button
+                  type="button"
+                  onClick={handleAddExtraUpload}
+                  disabled={savingExtra || !extraVideoLink.trim()}
+                  className="w-full"
+                >
+                  {savingExtra ? "Saving..." : "Save Extra Video"}
+                </Button>
+
+                <p className="text-xs text-muted-foreground">
+                  Extra videos do not affect your mandatory daily checklist but will appear in admin
+                  video lists and daily links views.
+                </p>
               </CardContent>
             </Card>
           </div>
