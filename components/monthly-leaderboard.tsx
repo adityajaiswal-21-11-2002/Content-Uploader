@@ -117,8 +117,8 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="cq-p-fluid-md">
-        <div className="space-y-4 container-query">
+      <CardContent className="w-full">
+        <div className="space-y-4 w-full">
           {stats.map((stat, index) => (
             <div
               key={stat.employee_id}

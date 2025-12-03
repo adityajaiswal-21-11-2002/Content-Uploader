@@ -64,12 +64,11 @@ export default function EmployeeCard({ employee, complianceSummary }: EmployeeCa
     <Link href={`/employee/${employee.id}`}>
       <Card
         className={`
-          modern-card interactive-card hover-lift cursor-pointer animate-fade-in
+          modern-card interactive-card hover-lift cursor-pointer animate-fade-in w-full
           ${!todayCompliant
             ? "border-red-300/50 dark:border-red-700/50 bg-red-50/30 dark:bg-red-950/30"
             : "border-border/50 hover:border-primary/30"
           }
-          container-query
         `}
       >
         <CardHeader className="cq-p-fluid-md">

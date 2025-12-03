@@ -73,8 +73,8 @@ export function ResponsiveNavLayout({
 
   return (
     <SidebarProvider>
-      <div className="mobile-bottom-nav-spacing container-query">
-        <Sidebar variant="inset" className="container-query">
+      <div className="mobile-bottom-nav-spacing w-full">
+        <Sidebar variant="inset">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -186,12 +186,10 @@ export function ResponsiveNavLayout({
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 container-modern animate-fade-in">
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 w-full animate-fade-in">
           {headerContent}
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-4 modern-card animate-slide-up">
-            <div className="responsive-grid">
-              {children}
-            </div>
+          <div className="min-h-[100vh] flex-1 md:min-h-min">
+            {children}
           </div>
         </div>
       </SidebarInset>

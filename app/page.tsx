@@ -217,9 +217,9 @@ export default function HomePage() {
       title="Content Upload Tracker"
       subtitle="Track daily and weekly uploads"
     >
-      <div className="space-y-6">
+      <div className="space-y-6 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         {/* Today's Compliance Summary */}
-        <Card className="modern-card-gradient elevated-card animate-slide-up">
+        <Card className="modern-card-gradient elevated-card animate-slide-up w-full">
           <CardHeader className="cq-p-fluid-md">
             <CardTitle className="flex items-center gap-3 fluid-text-lg">
               <div className="p-2 rounded-full bg-primary/10">
@@ -268,7 +268,7 @@ export default function HomePage() {
         </Card>
 
         {/* Employee Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 container-query">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {employees.map((employee, index) => {
             const summary = complianceSummary.find((s) => s.employee_id === employee.id)
             return (
