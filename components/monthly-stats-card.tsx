@@ -64,7 +64,7 @@ export default function MonthlyStatsCard({ employeeId }: MonthlyStatsCardProps) 
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="p-4 rounded-lg bg-accent/50">
           <div className="flex items-center gap-2 mb-2">
             <Youtube className="w-4 h-4 text-red-500" />

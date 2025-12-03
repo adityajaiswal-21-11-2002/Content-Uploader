@@ -256,9 +256,13 @@ export default function EmployeeDashboardPage() {
   const quota = getRequiredQuota(employee.role, employee)
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto">
-        <Button onClick={() => router.push("/")} variant="outline" className="mb-6 gap-2">
+    <div className="min-h-screen bg-background px-4 py-6 sm:p-6">
+      <div className="max-w-4xl mx-auto w-full">
+        <Button
+          onClick={() => router.push("/")}
+          variant="outline"
+          className="mb-6 gap-2 w-full sm:w-auto justify-center"
+        >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
         </Button>

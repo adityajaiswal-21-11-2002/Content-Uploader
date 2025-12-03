@@ -58,16 +58,16 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
+    <div className="min-h-screen bg-background px-4 py-6 sm:p-6">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex-1 space-y-2">
             <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
             <p className="text-muted-foreground">Manage compliance and topics for all employees</p>
           </div>
           <Link
             href="/"
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition text-center w-full md:w-auto"
           >
             Back to Main
           </Link>
@@ -83,7 +83,7 @@ export default function AdminDashboardPage() {
         )}
 
         <Tabs defaultValue="daily" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="flex flex-wrap gap-2 sm:grid sm:grid-cols-5">
             <TabsTrigger value="daily">Daily Compliance</TabsTrigger>
             <TabsTrigger value="weekly">Weekly Compliance</TabsTrigger>
             <TabsTrigger value="monthly">Monthly Awards</TabsTrigger>

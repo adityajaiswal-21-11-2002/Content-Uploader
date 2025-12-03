@@ -152,7 +152,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
       {!employeeId && (
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-muted-foreground" />
                 <span className="text-sm font-medium">Select Employee:</span>
@@ -161,7 +161,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                 value={selectedEmployee?.toString() || ""}
                 onValueChange={(v) => setSelectedEmployee(Number.parseInt(v))}
               >
-                <SelectTrigger className="w-[250px]">
+                <SelectTrigger className="w-full md:w-[250px]">
                   <SelectValue placeholder="Select employee" />
                 </SelectTrigger>
                 <SelectContent>
@@ -179,7 +179,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
 
       {selectedEmployee && (
         <Tabs defaultValue="daily" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="flex flex-wrap gap-2 sm:grid sm:grid-cols-3">
             <TabsTrigger value="daily">Daily Tracking</TabsTrigger>
             <TabsTrigger value="weekly">Weekly Tracking</TabsTrigger>
             <TabsTrigger value="monthly">Monthly Tracking</TabsTrigger>
@@ -188,9 +188,9 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
           {/* Daily Tracking */}
           <TabsContent value="daily">
             <div className="space-y-6">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <Select value={selectedDays.toString()} onValueChange={(v) => setSelectedDays(Number.parseInt(v))}>
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger className="w-full sm:w-[150px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -213,7 +213,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                   <CardDescription>Daily uploads for {selectedEmployeeName} - Instagram & YouTube</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
+                  <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
                     <LineChart data={dailyChartData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis
@@ -242,7 +242,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                   <CardDescription>YouTube and Instagram uploads by day</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
+                  <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
                     <BarChart data={dailyChartData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis
@@ -268,9 +268,9 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
           {/* Weekly Tracking */}
           <TabsContent value="weekly">
             <div className="space-y-6">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <Select value={selectedWeeks.toString()} onValueChange={(v) => setSelectedWeeks(Number.parseInt(v))}>
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger className="w-full sm:w-[150px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -292,7 +292,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                   <CardDescription>Weekly uploads for {selectedEmployeeName} - Instagram & YouTube</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
+                  <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
                     <BarChart data={weeklyChartData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis
@@ -320,7 +320,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                   <CardDescription>Trend over time</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
+                  <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
                     <LineChart data={weeklyChartData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis
@@ -346,9 +346,9 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
           {/* Monthly Tracking */}
           <TabsContent value="monthly">
             <div className="space-y-6">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <Select value={selectedMonths.toString()} onValueChange={(v) => setSelectedMonths(Number.parseInt(v))}>
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger className="w-full sm:w-[150px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -370,7 +370,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                 </CardHeader>
                 <CardContent>
                   {monthlyChartData.length > 0 ? (
-                    <ChartContainer config={chartConfig} className="h-[400px]">
+                    <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
                       <BarChart data={monthlyChartData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis
@@ -404,7 +404,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                 </CardHeader>
                 <CardContent>
                   {monthlyChartData.length > 0 ? (
-                    <ChartContainer config={chartConfig} className="h-[400px]">
+                    <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
                       <LineChart data={monthlyChartData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis

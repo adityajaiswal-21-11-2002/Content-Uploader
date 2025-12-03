@@ -122,7 +122,7 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
   return (
     <div className="space-y-6">
       <Tabs defaultValue={view} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="flex flex-wrap gap-2 sm:grid sm:grid-cols-3">
           <TabsTrigger value="daily">Daily Overview</TabsTrigger>
           <TabsTrigger value="weekly">Weekly Overview</TabsTrigger>
           <TabsTrigger value="monthly">Monthly Overview</TabsTrigger>
@@ -131,9 +131,9 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
         {/* Daily Overview */}
         <TabsContent value="daily">
           <div className="space-y-6">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <Select value={selectedDays.toString()} onValueChange={(v) => setSelectedDays(Number.parseInt(v))}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="w-full sm:w-[150px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -156,7 +156,7 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
                 <CardDescription>Total uploads per employee over the selected period</CardDescription>
               </CardHeader>
               <CardContent>
-                <ChartContainer config={chartConfig} className="h-[500px]">
+                <ChartContainer config={chartConfig} className="h-80 sm:h-[420px] lg:h-[520px]">
                   <BarChart data={dailyComparisonData} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" />
@@ -227,9 +227,9 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
         {/* Weekly Overview */}
         <TabsContent value="weekly">
           <div className="space-y-6">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <Select value={selectedWeeks.toString()} onValueChange={(v) => setSelectedWeeks(Number.parseInt(v))}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="w-full sm:w-[150px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -251,7 +251,7 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
                 <CardDescription>Total uploads per employee over the selected weeks</CardDescription>
               </CardHeader>
               <CardContent>
-                <ChartContainer config={chartConfig} className="h-[500px]">
+                <ChartContainer config={chartConfig} className="h-80 sm:h-[420px] lg:h-[520px]">
                   <BarChart data={weeklyComparisonData} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" />
@@ -320,9 +320,9 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
         {/* Monthly Overview */}
         <TabsContent value="monthly">
           <div className="space-y-6">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue placeholder="Select month" />
                 </SelectTrigger>
                 <SelectContent>
@@ -353,7 +353,7 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
               </CardHeader>
               <CardContent>
                 {monthlyComparisonData.length > 0 ? (
-                  <ChartContainer config={chartConfig} className="h-[500px]">
+                  <ChartContainer config={chartConfig} className="h-80 sm:h-[420px] lg:h-[520px]">
                     <BarChart data={monthlyComparisonData} layout="vertical">
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis type="number" />

@@ -53,6 +53,15 @@ export async function GET(request: Request) {
       .sort({ date: 1 })
       .toArray()
 
+    // Get extra uploads for the date range
+    const extraUploads = await db
+      .collection("extra_uploads")
+      .find({
+        employee_id: employeeIdParam ? Number.parseInt(employeeIdParam) : { $exists: true },
+        date: { $gte: startDateStr, $lte: endDateStr },
+      })
+      .toArray()
+
     // Group by week
     const dataByWeek: Record<string, {
       weekStart: string
@@ -90,6 +99,8 @@ export async function GET(request: Request) {
             employee_name: emp.name,
             youtube_uploads: 0,
             instagram_uploads: 0,
+            youtube_extra: 0,
+            instagram_extra: 0,
             total_uploads: 0,
           }
         })
@@ -108,12 +119,29 @@ export async function GET(request: Request) {
         const empData = dataByWeek[weekStartStr].employees[upload.employee_id]
         if (upload.youtube_done) {
           empData.youtube_uploads++
-          empData.total_uploads++
         }
         if (upload.insta_done) {
           empData.instagram_uploads++
-          empData.total_uploads++
         }
+        empData.total_uploads = empData.youtube_uploads + empData.instagram_uploads + empData.youtube_extra + empData.instagram_extra
+      }
+    })
+
+    // Process extra uploads
+    extraUploads.forEach((upload) => {
+      const uploadDate = new Date(upload.date)
+      const weekStart = getWeekStartDate(uploadDate)
+      const weekStartStr = formatDateISO(weekStart)
+
+      const week = dataByWeek[weekStartStr]
+      const employeeWeek = week?.employees[upload.employee_id]
+      if (employeeWeek) {
+        if (upload.platform === "youtube") {
+          employeeWeek.youtube_extra++
+        } else if (upload.platform === "instagram") {
+          employeeWeek.instagram_extra++
+        }
+        employeeWeek.total_uploads = employeeWeek.youtube_uploads + employeeWeek.instagram_uploads + employeeWeek.youtube_extra + employeeWeek.instagram_extra
       }
     })
 

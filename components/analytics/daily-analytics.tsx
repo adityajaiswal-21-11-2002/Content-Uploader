@@ -45,11 +45,26 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
     return <div className="text-center py-8 text-muted-foreground">No data available.</div>
   }
 
-  // Format dates for display
-  const chartData = data.data.map((item: any) => ({
-    ...item,
-    dateLabel: new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-  }))
+  // Format dates for display and expose extra upload fields
+  const chartData = data.data.map((item: any) => {
+    const youtubeExtra = item.youtube_extra || 0
+    const instagramExtra = item.instagram_extra || 0
+    const youtubeMandatory =
+      item.youtube_mandatory !== undefined ? item.youtube_mandatory : Math.max(0, (item.youtube || 0) - youtubeExtra)
+    const instagramMandatory =
+      item.instagram_mandatory !== undefined
+        ? item.instagram_mandatory
+        : Math.max(0, (item.instagram || 0) - instagramExtra)
+
+    return {
+      ...item,
+      dateLabel: new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      youtube_mandatory: youtubeMandatory,
+      youtube_extra: youtubeExtra,
+      instagram_mandatory: instagramMandatory,
+      instagram_extra: instagramExtra,
+    }
+  })
 
   const chartConfig = {
     youtube: {
@@ -63,6 +78,22 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
     total: {
       label: "Total",
       color: "#3b82f6",
+    },
+    youtube_mandatory: {
+      label: "YouTube (Daily)",
+      color: "#ef4444",
+    },
+    youtube_extra: {
+      label: "YouTube Extra",
+      color: "#fb923c",
+    },
+    instagram_mandatory: {
+      label: "Instagram (Daily)",
+      color: "#ec4899",
+    },
+    instagram_extra: {
+      label: "Instagram Extra",
+      color: "#f9a8d4",
     },
     employees_uploaded_yt: {
       label: "Uploaded YT",
@@ -80,12 +111,28 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
       label: "Missed IG",
       color: "#ef4444",
     },
+    employee_youtube: {
+      label: "Personal YouTube",
+      color: "#ef4444",
+    },
+    employee_youtube_extra: {
+      label: "Personal YouTube Extra",
+      color: "#fb923c",
+    },
+    employee_instagram: {
+      label: "Personal Instagram",
+      color: "#ec4899",
+    },
+    employee_instagram_extra: {
+      label: "Personal Instagram Extra",
+      color: "#f9a8d4",
+    },
   }
 
   return (
     <div className="space-y-6">
       {/* Days Selector */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Select value={selectedDays.toString()} onValueChange={(v) => setSelectedDays(Number.parseInt(v))}>
           <SelectTrigger className="w-[150px]">
             <SelectValue />
@@ -114,6 +161,9 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
                 <p className="text-xs text-muted-foreground">
                   Avg: {data.summary.avg_youtube_per_day.toFixed(1)}/day
                 </p>
+                <p className="text-xs text-muted-foreground">
+                  Extras: +{data.summary.extra_youtube_uploads || 0}
+                </p>
               </div>
               <Youtube className="w-8 h-8 text-red-500" />
             </div>
@@ -128,6 +178,9 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
                 <p className="text-xs text-muted-foreground">
                   Avg: {data.summary.avg_instagram_per_day.toFixed(1)}/day
                 </p>
+                <p className="text-xs text-muted-foreground">
+                  Extras: +{data.summary.extra_instagram_uploads || 0}
+                </p>
               </div>
               <Instagram className="w-8 h-8 text-pink-500" />
             </div>
@@ -139,6 +192,10 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
               <div>
                 <p className="text-sm text-muted-foreground">Total Uploads</p>
                 <p className="text-2xl font-bold">{data.summary.total_uploads}</p>
+                <p className="text-xs text-muted-foreground">
+                  Extras overall: +
+                  {(data.summary.extra_youtube_uploads || 0) + (data.summary.extra_instagram_uploads || 0)}
+                </p>
               </div>
               <TrendingUp className="w-8 h-8 text-blue-500" />
             </div>
@@ -155,6 +212,9 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
           </CardContent>
         </Card>
       </div>
+      <p className="text-xs text-muted-foreground">
+        All counts include both mandatory uploads and any extra videos.
+      </p>
 
       {/* Daily Uploads Line Chart */}
       <Card>
@@ -163,7 +223,7 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
           <CardDescription>Uploads per day over time</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[400px]">
+          <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -192,7 +252,7 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
           <CardDescription>YouTube and Instagram uploads by day</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[400px]">
+          <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -206,8 +266,10 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
               <YAxis />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Legend />
-              <Bar dataKey="youtube" fill="#ef4444" name="YouTube" />
-              <Bar dataKey="instagram" fill="#ec4899" name="Instagram" />
+              <Bar dataKey="youtube_mandatory" stackId="youtube" fill="#ef4444" name="YouTube (Daily)" />
+              <Bar dataKey="youtube_extra" stackId="youtube" fill="#fb923c" name="YouTube Extra" />
+              <Bar dataKey="instagram_mandatory" stackId="instagram" fill="#ec4899" name="Instagram (Daily)" />
+              <Bar dataKey="instagram_extra" stackId="instagram" fill="#f9a8d4" name="Instagram Extra" />
             </BarChart>
           </ChartContainer>
         </CardContent>
@@ -222,7 +284,7 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
               <CardDescription>Number of employees who uploaded vs missed YouTube videos each day</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-[400px]">
+              <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
                 <AreaChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
@@ -264,7 +326,7 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
               <CardDescription>Number of employees who uploaded vs missed Instagram posts each day</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-[400px]">
+              <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
                 <AreaChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
@@ -309,7 +371,7 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
             <CardDescription>Your upload activity over time</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px]">
+            <ChartContainer config={chartConfig} className="h-[220px] sm:h-[300px] lg:h-[360px]">
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
@@ -323,10 +385,30 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Bar dataKey="employee_youtube" fill="#ef4444" name="YouTube Uploaded" />
-                <Bar dataKey="employee_instagram" fill="#ec4899" name="Instagram Uploaded" />
+                <Bar dataKey="employee_youtube" stackId="employee_youtube" fill="#ef4444" name="YouTube Uploaded" />
+                <Bar
+                  dataKey="employee_youtube_extra"
+                  stackId="employee_youtube"
+                  fill="#fb923c"
+                  name="YouTube Extra"
+                />
+                <Bar
+                  dataKey="employee_instagram"
+                  stackId="employee_instagram"
+                  fill="#ec4899"
+                  name="Instagram Uploaded"
+                />
+                <Bar
+                  dataKey="employee_instagram_extra"
+                  stackId="employee_instagram"
+                  fill="#f9a8d4"
+                  name="Instagram Extra"
+                />
               </BarChart>
             </ChartContainer>
+            <p className="text-xs text-muted-foreground mt-3">
+              Extras this period: +{chartData.reduce((sum, d) => sum + (d.employee_youtube_extra || 0) + (d.employee_instagram_extra || 0), 0)}
+            </p>
           </CardContent>
         </Card>
       )}

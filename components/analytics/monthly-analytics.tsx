@@ -54,15 +54,24 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
   }
 
   // Prepare data for charts
-  const barChartData = data.data.map((item: any) => ({
-    name: item.employee_name.length > 15 ? item.employee_name.substring(0, 15) + "..." : item.employee_name,
-    fullName: item.employee_name,
-    YouTube: item.youtube_uploads,
-    Instagram: item.instagram_uploads,
-    Total: item.total_uploads,
-    "Required YT": item.required_youtube,
-    "Required IG": item.required_instagram,
-  }))
+  const barChartData = data.data.map((item: any) => {
+    const youtubeExtra = item.youtube_extra_uploads || 0
+    const instagramExtra = item.instagram_extra_uploads || 0
+    const youtubeMandatory = Math.max(0, (item.youtube_uploads || 0) - youtubeExtra)
+    const instagramMandatory = Math.max(0, (item.instagram_uploads || 0) - instagramExtra)
+
+    return {
+      name: item.employee_name.length > 15 ? item.employee_name.substring(0, 15) + "..." : item.employee_name,
+      fullName: item.employee_name,
+      youtube_mandatory: youtubeMandatory,
+      youtube_extra: youtubeExtra,
+      instagram_mandatory: instagramMandatory,
+      instagram_extra: instagramExtra,
+      total: item.total_uploads,
+      required_youtube: item.required_youtube,
+      required_instagram: item.required_instagram,
+    }
+  })
 
   const comparisonData = data.data.map((item: any) => ({
     name: item.employee_name.length > 15 ? item.employee_name.substring(0, 15) + "..." : item.employee_name,
@@ -75,23 +84,31 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
   }))
 
   const chartConfig = {
-    YouTube: {
-      label: "YouTube",
+    youtube_mandatory: {
+      label: "YouTube (Monthly)",
       color: "#ef4444",
     },
-    Instagram: {
-      label: "Instagram",
+    youtube_extra: {
+      label: "YouTube Extra",
+      color: "#fb923c",
+    },
+    instagram_mandatory: {
+      label: "Instagram (Monthly)",
       color: "#ec4899",
     },
-    Total: {
+    instagram_extra: {
+      label: "Instagram Extra",
+      color: "#f9a8d4",
+    },
+    total: {
       label: "Total",
       color: "#3b82f6",
     },
-    "Required YT": {
+    required_youtube: {
       label: "Required YouTube",
       color: "#fbbf24",
     },
-    "Required IG": {
+    required_instagram: {
       label: "Required Instagram",
       color: "#f472b6",
     },
@@ -126,9 +143,9 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
   return (
     <div className="space-y-6">
       {/* Month Selector */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue placeholder="Select month" />
           </SelectTrigger>
           <SelectContent>
@@ -153,6 +170,9 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
               <div>
                 <p className="text-sm text-muted-foreground">Total YouTube</p>
                 <p className="text-2xl font-bold">{data.summary.total_youtube_uploads}</p>
+                <p className="text-xs text-muted-foreground">
+                  Extras: +{data.summary.total_youtube_extras || 0}
+                </p>
               </div>
               <Youtube className="w-8 h-8 text-red-500" />
             </div>
@@ -164,6 +184,9 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
               <div>
                 <p className="text-sm text-muted-foreground">Total Instagram</p>
                 <p className="text-2xl font-bold">{data.summary.total_instagram_uploads}</p>
+                <p className="text-xs text-muted-foreground">
+                  Extras: +{data.summary.total_instagram_extras || 0}
+                </p>
               </div>
               <Instagram className="w-8 h-8 text-pink-500" />
             </div>
@@ -175,6 +198,10 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
               <div>
                 <p className="text-sm text-muted-foreground">Total Uploads</p>
                 <p className="text-2xl font-bold">{data.summary.total_uploads}</p>
+                <p className="text-xs text-muted-foreground">
+                  Extras overall: +
+                  {(data.summary.total_youtube_extras || 0) + (data.summary.total_instagram_extras || 0)}
+                </p>
               </div>
               <TrendingUp className="w-8 h-8 text-blue-500" />
             </div>
@@ -194,6 +221,9 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
           </CardContent>
         </Card>
       </div>
+      <p className="text-xs text-muted-foreground">
+        Totals now include extra uploads logged via the extra videos form.
+      </p>
 
       {/* Total Uploads Bar Chart */}
       <Card>
@@ -202,7 +232,7 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
           <CardDescription>Total uploads for {data.month}</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[400px]">
+          <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
             <BarChart data={barChartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -215,9 +245,11 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
               <YAxis />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Legend />
-              <Bar dataKey="YouTube" fill="#ef4444" />
-              <Bar dataKey="Instagram" fill="#ec4899" />
-              <Bar dataKey="Total" fill="#3b82f6" />
+              <Bar dataKey="youtube_mandatory" stackId="youtube" fill="#ef4444" name="YouTube (Monthly)" />
+              <Bar dataKey="youtube_extra" stackId="youtube" fill="#fb923c" name="YouTube Extra" />
+              <Bar dataKey="instagram_mandatory" stackId="instagram" fill="#ec4899" name="Instagram (Monthly)" />
+              <Bar dataKey="instagram_extra" stackId="instagram" fill="#f9a8d4" name="Instagram Extra" />
+              <Bar dataKey="total" fill="#3b82f6" name="Total" />
             </BarChart>
           </ChartContainer>
         </CardContent>
@@ -230,7 +262,7 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
           <CardDescription>Who uploaded and who missed YouTube videos</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[400px]">
+          <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
             <BarChart data={comparisonData} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
@@ -251,7 +283,7 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
           <CardDescription>Who uploaded and who missed Instagram posts</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[400px]">
+          <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
             <BarChart data={comparisonData} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
@@ -272,7 +304,7 @@ export default function MonthlyAnalytics({ employeeId, month }: MonthlyAnalytics
           <CardDescription>Employees meeting requirements vs not meeting</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[300px]">
+          <ChartContainer config={chartConfig} className="h-[220px] sm:h-[300px] lg:h-[360px]">
             <BarChart data={comparisonData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis

@@ -120,7 +120,7 @@ export default function DailyTrackingCalendar({ employeeId, days = 30 }: DailyTr
       <CardContent>
         <div className="space-y-3">
           {/* Statistics Summary */}
-          <div className="grid grid-cols-3 gap-2 p-3 bg-accent/10 rounded-lg">
+          <div className="grid grid-cols-1 gap-3 p-3 bg-accent/10 rounded-lg sm:grid-cols-3">
             <div className="text-center">
               <div className="text-2xl font-bold text-foreground">{youtubeDays}</div>
               <div className="text-xs text-muted-foreground">YouTube</div>

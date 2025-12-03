@@ -122,7 +122,7 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
                 index < 3 ? "bg-accent/50 border-primary/20" : "bg-background border-border"
               }`}
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div className="flex items-start gap-3 flex-1">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted shrink-0">
                     {getRankIcon(index) || (
@@ -170,7 +170,7 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
                     )}
                   </div>
                 </div>
-                <div className="text-right shrink-0">
+                <div className="text-left md:text-right shrink-0">
                   {!stat.fully_compliant && (
                     <div className="space-y-1">
                       {!stat.insta_compliant && (

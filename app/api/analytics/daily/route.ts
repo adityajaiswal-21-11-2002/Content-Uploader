@@ -50,9 +50,22 @@ export async function GET(request: Request) {
       .sort({ date: 1 })
       .toArray()
 
+    // Get extra uploads for the date range
+    const extraUploads = await db
+      .collection("extra_uploads")
+      .find({
+        employee_id: employeeIdParam ? Number.parseInt(employeeIdParam) : { $exists: true },
+        date: { $gte: startDateStr, $lte: endDateStr },
+      })
+      .toArray()
+
     // Group by date
     const dataByDate: Record<string, {
       date: string
+      youtube_mandatory: number
+      instagram_mandatory: number
+      youtube_extra: number
+      instagram_extra: number
       youtube_uploads: number
       instagram_uploads: number
       total_uploads: number
@@ -68,6 +81,10 @@ export async function GET(request: Request) {
       const dateStr = formatDateISO(currentDate)
       dataByDate[dateStr] = {
         date: dateStr,
+        youtube_mandatory: 0,
+        instagram_mandatory: 0,
+        youtube_extra: 0,
+        instagram_extra: 0,
         youtube_uploads: 0,
         instagram_uploads: 0,
         total_uploads: 0,
@@ -84,18 +101,36 @@ export async function GET(request: Request) {
       const dateStr = upload.date
       if (dataByDate[dateStr]) {
         if (upload.youtube_done) {
-          dataByDate[dateStr].youtube_uploads++
+          dataByDate[dateStr].youtube_mandatory++
           dataByDate[dateStr].employees_uploaded_yt++
         }
         if (upload.insta_done) {
-          dataByDate[dateStr].instagram_uploads++
+          dataByDate[dateStr].instagram_mandatory++
           dataByDate[dateStr].employees_uploaded_ig++
         }
         if (upload.youtube_done && upload.insta_done) {
           dataByDate[dateStr].employees_uploaded_both++
         }
-        dataByDate[dateStr].total_uploads = dataByDate[dateStr].youtube_uploads + dataByDate[dateStr].instagram_uploads
       }
+    })
+
+    // Process extra uploads
+    extraUploads.forEach((upload) => {
+      const dateStr = upload.date
+      if (dataByDate[dateStr]) {
+        if (upload.platform === "youtube") {
+          dataByDate[dateStr].youtube_extra++
+        } else if (upload.platform === "instagram") {
+          dataByDate[dateStr].instagram_extra++
+        }
+      }
+    })
+
+    // Finalize totals (mandatory + extras)
+    Object.values(dataByDate).forEach((data) => {
+      data.youtube_uploads = data.youtube_mandatory + data.youtube_extra
+      data.instagram_uploads = data.instagram_mandatory + data.instagram_extra
+      data.total_uploads = data.youtube_uploads + data.instagram_uploads
     })
 
     // Convert to array and format for charts
@@ -104,6 +139,10 @@ export async function GET(request: Request) {
       youtube: data.youtube_uploads,
       instagram: data.instagram_uploads,
       total: data.total_uploads,
+      youtube_mandatory: data.youtube_mandatory,
+      youtube_extra: data.youtube_extra,
+      instagram_mandatory: data.instagram_mandatory,
+      instagram_extra: data.instagram_extra,
       employees_uploaded_yt: data.employees_uploaded_yt,
       employees_uploaded_ig: data.employees_uploaded_ig,
       employees_uploaded_both: data.employees_uploaded_both,
@@ -116,12 +155,27 @@ export async function GET(request: Request) {
     let employeeData = null
     if (employeeIdParam) {
       const employeeUploads = dailyUploads.filter((u) => u.employee_id === Number.parseInt(employeeIdParam))
+      const employeeExtras = extraUploads.filter((u) => u.employee_id === Number.parseInt(employeeIdParam))
+
+      const extraByDate = employeeExtras.reduce<Record<string, { youtube: number; instagram: number }>>((acc, extra) => {
+        if (!acc[extra.date]) {
+          acc[extra.date] = { youtube: 0, instagram: 0 }
+        }
+        if (extra.platform === "youtube") {
+          acc[extra.date].youtube++
+        } else {
+          acc[extra.date].instagram++
+        }
+        return acc
+      }, {})
       employeeData = chartData.map((data) => {
         const upload = employeeUploads.find((u) => u.date === data.date)
         return {
           ...data,
           employee_youtube: upload?.youtube_done ? 1 : 0,
           employee_instagram: upload?.insta_done ? 1 : 0,
+          employee_youtube_extra: extraByDate[data.date]?.youtube || 0,
+          employee_instagram_extra: extraByDate[data.date]?.instagram || 0,
         }
       })
     }
@@ -136,6 +190,8 @@ export async function GET(request: Request) {
         total_youtube_uploads: chartData.reduce((sum, d) => sum + d.youtube, 0),
         total_instagram_uploads: chartData.reduce((sum, d) => sum + d.instagram, 0),
         total_uploads: chartData.reduce((sum, d) => sum + d.total, 0),
+        extra_youtube_uploads: chartData.reduce((sum, d) => sum + (d.youtube_extra || 0), 0),
+        extra_instagram_uploads: chartData.reduce((sum, d) => sum + (d.instagram_extra || 0), 0),
         avg_youtube_per_day: chartData.length > 0 ? chartData.reduce((sum, d) => sum + d.youtube, 0) / chartData.length : 0,
         avg_instagram_per_day: chartData.length > 0 ? chartData.reduce((sum, d) => sum + d.instagram, 0) / chartData.length : 0,
       },

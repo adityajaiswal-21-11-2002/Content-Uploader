@@ -119,10 +119,10 @@ export default function HomePage() {
   const compliantToday = complianceSummary.filter((s) => s.today_compliant).length
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
+    <div className="min-h-screen bg-background px-4 py-6 sm:p-6">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex-1 space-y-2">
             <h1 className="text-4xl font-bold text-foreground mb-2">Content Upload Tracker</h1>
             <p className="text-muted-foreground">
               Track daily and weekly uploads • 1 Instagram/day • 3 YouTube/week
@@ -130,7 +130,7 @@ export default function HomePage() {
           </div>
           <Link
             href="/admin"
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition text-center w-full md:w-auto"
           >
             Admin Dashboard
           </Link>
@@ -175,7 +175,7 @@ export default function HomePage() {
         </Card>
 
         <Tabs defaultValue="employees" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="flex flex-wrap gap-2 sm:grid sm:grid-cols-3">
             <TabsTrigger value="employees">All Employees</TabsTrigger>
             <TabsTrigger value="leaderboard">Monthly Leaderboard</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
