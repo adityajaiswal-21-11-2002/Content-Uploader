@@ -189,9 +189,9 @@ export function ResponsiveNavLayout({
             </main>
           </div>
         </div>
-
-        <MobileBottomNav navItems={navItems} />
       </div>
+
+      <MobileBottomNav navItems={navItems} />
     </SidebarProvider>
   )
 }
