@@ -123,3 +123,357 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Mobile bottom navigation spacing */
+@layer utilities {
+  .mobile-bottom-nav-spacing {
+    @apply pb-20 md:pb-0;
+  }
+}
+
+/* Fluid typography system */
+@layer base {
+  :root {
+    --font-size-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
+    --font-size-sm: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+    --font-size-base: clamp(1rem, 0.9rem + 0.4vw, 1.125rem);
+    --font-size-lg: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
+    --font-size-xl: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+    --font-size-2xl: clamp(1.5rem, 1.3rem + 0.8vw, 2rem);
+    --font-size-3xl: clamp(1.875rem, 1.5rem + 1vw, 2.5rem);
+    --font-size-4xl: clamp(2.25rem, 1.8rem + 1.2vw, 3rem);
+  }
+
+  .fluid-text-xs { font-size: var(--font-size-xs); }
+  .fluid-text-sm { font-size: var(--font-size-sm); }
+  .fluid-text-base { font-size: var(--font-size-base); }
+  .fluid-text-lg { font-size: var(--font-size-lg); }
+  .fluid-text-xl { font-size: var(--font-size-xl); }
+  .fluid-text-2xl { font-size: var(--font-size-2xl); }
+  .fluid-text-3xl { font-size: var(--font-size-3xl); }
+  .fluid-text-4xl { font-size: var(--font-size-4xl); }
+}
+
+/* Modern card designs with better shadows and animations */
+@layer components {
+  .modern-card {
+    @apply bg-card/50 backdrop-blur-sm border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:border-border hover:bg-card/80;
+  }
+
+  .modern-card-gradient {
+    @apply bg-gradient-to-br from-card/80 via-card/60 to-card/40 backdrop-blur-sm border border-border/30 shadow-lg hover:shadow-xl transition-all duration-500 hover:border-border/60;
+  }
+
+  .glass-effect {
+    @apply bg-background/80 backdrop-blur-md border border-border/20 shadow-xl;
+  }
+
+  .elevated-card {
+    @apply shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-border/50 hover:border-border;
+  }
+
+  .interactive-card {
+    @apply transform transition-all duration-200 hover:scale-[1.02] hover:-translate-y-1 active:scale-[0.98] cursor-pointer;
+  }
+}
+
+/* Container query support for component-level responsiveness */
+@layer utilities {
+  .container-query {
+    container-type: inline-size;
+  }
+
+  /* Grid layouts based on container size */
+  @container (min-width: 320px) {
+    .cq-grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .cq-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cq-grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cq-flex-col { flex-direction: column; }
+    .cq-text-center { text-align: center; }
+    .cq-p-fluid-xs { padding: clamp(0.5rem, 2vw, 0.75rem); }
+  }
+
+  @container (min-width: 480px) {
+    .cq-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cq-grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cq-flex-row { flex-direction: row; }
+    .cq-text-left { text-align: left; }
+    .cq-p-fluid-sm { padding: clamp(0.75rem, 3vw, 1rem); }
+  }
+
+  @container (min-width: 640px) {
+    .cq-grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cq-p-fluid-md { padding: clamp(1rem, 4vw, 1.5rem); }
+  }
+
+  @container (min-width: 768px) {
+    .cq-p-fluid-lg { padding: clamp(1.5rem, 5vw, 2rem); }
+  }
+
+  @container (min-width: 1024px) {
+    .cq-p-fluid-xl { padding: clamp(2rem, 6vw, 3rem); }
+    .cq-text-left { text-align: left; }
+    .cq-flex-row { flex-direction: row; }
+  }
+
+  /* Typography scaling within containers */
+  @container (min-width: 320px) {
+    .cq-text-xs { font-size: clamp(0.75rem, 2.5vw, 0.875rem); }
+    .cq-text-sm { font-size: clamp(0.875rem, 3vw, 1rem); }
+  }
+
+  @container (min-width: 480px) {
+    .cq-text-base { font-size: clamp(1rem, 3.5vw, 1.125rem); }
+    .cq-text-lg { font-size: clamp(1.125rem, 4vw, 1.25rem); }
+  }
+
+  @container (min-width: 640px) {
+    .cq-text-xl { font-size: clamp(1.25rem, 4.5vw, 1.5rem); }
+    .cq-text-2xl { font-size: clamp(1.5rem, 5vw, 2rem); }
+  }
+
+  /* Spacing within containers */
+  @container (min-width: 320px) {
+    .cq-space-y-fluid-xs > * + * { margin-top: clamp(0.25rem, 1vw, 0.5rem); }
+    .cq-space-y-fluid-sm > * + * { margin-top: clamp(0.5rem, 2vw, 0.75rem); }
+  }
+
+  @container (min-width: 480px) {
+    .cq-space-y-fluid-md > * + * { margin-top: clamp(0.75rem, 3vw, 1rem); }
+    .cq-space-y-fluid-lg > * + * { margin-top: clamp(1rem, 4vw, 1.5rem); }
+  }
+
+  /* Hide/show elements based on container size */
+  @container (max-width: 479px) {
+    .cq-hidden-mobile { display: none; }
+  }
+
+  @container (min-width: 480px) {
+    .cq-hidden-tablet-up { display: none; }
+  }
+
+  @container (min-width: 768px) {
+    .cq-hidden-desktop-up { display: none; }
+  }
+}
+
+/* Progressive enhancement for modern browsers */
+@supports (backdrop-filter: blur(10px)) {
+  .backdrop-blur-fallback {
+    backdrop-filter: blur(10px);
+  }
+}
+
+@supports (background: linear-gradient(in oklch, red, blue)) {
+  .oklch-gradient {
+    background: linear-gradient(135deg,
+      oklch(0.7 0.15 320) 0%,
+      oklch(0.75 0.12 280) 50%,
+      oklch(0.8 0.1 240) 100%
+    );
+  }
+}
+
+/* Modern CSS features with fallbacks */
+@layer base {
+  /* Smooth scrolling for modern browsers */
+  @supports (scroll-behavior: smooth) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Better text rendering */
+  @supports (font-smooth: antialiased) {
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  }
+
+  /* CSS custom properties for dynamic theming */
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+  }
+
+  .dark {
+    --glass-bg: rgba(0, 0, 0, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Advanced interaction patterns */
+@supports (backdrop-filter: blur(10px)) and (clip-path: inset(0 round 10px)) {
+  .glass-morphism {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    clip-path: inset(0 round 10px);
+  }
+}
+
+/* Modern hover effects with hardware acceleration */
+@supports (transform: translateZ(0)) {
+  .hardware-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+}
+
+/* Advanced animation performance */
+@supports (will-change: transform) {
+  .animate-performance {
+    will-change: transform, opacity;
+  }
+
+  .animate-performance:hover {
+    will-change: auto;
+  }
+}
+
+/* CSS Grid improvements */
+@supports (display: grid) {
+  .grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+    gap: 1rem;
+  }
+}
+
+/* Container relative units */
+@supports (container-type: inline-size) {
+  .container-modern {
+    container-type: inline-size;
+  }
+
+  @container (min-width: 400px) {
+    .container-modern .responsive-text {
+      font-size: clamp(1rem, 4vw, 1.25rem);
+    }
+  }
+
+  @container (min-width: 600px) {
+    .container-modern .responsive-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @container (min-width: 800px) {
+    .container-modern .responsive-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+/* Enhanced animations and micro-interactions */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+
+  .animate-bounce-gentle {
+    animation: bounceGentle 2s infinite;
+  }
+
+  /* Safe area support for mobile devices */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .h-safe-area-bottom {
+    height: env(safe-area-inset-bottom);
+  }
+
+  /* Enhanced focus states for better accessibility */
+  .focus-ring-enhanced {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:shadow-lg;
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceGentle {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+/* Improved touch targets for mobile */
+@layer utilities {
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .touch-target-large {
+    @apply min-h-[48px] min-w-[48px];
+  }
+
+  /* Better focus states for accessibility */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* Responsive spacing system */
+  .space-fluid-xs { margin: clamp(0.5rem, 0.4rem + 0.4vw, 0.75rem); }
+  .space-fluid-sm { margin: clamp(0.75rem, 0.6rem + 0.6vw, 1rem); }
+  .space-fluid-md { margin: clamp(1rem, 0.8rem + 0.8vw, 1.5rem); }
+  .space-fluid-lg { margin: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); }
+  .space-fluid-xl { margin: clamp(2rem, 1.6rem + 1.6vw, 3rem); }
+
+  .p-fluid-xs { padding: clamp(0.5rem, 0.4rem + 0.4vw, 0.75rem); }
+  .p-fluid-sm { padding: clamp(0.75rem, 0.6rem + 0.6vw, 1rem); }
+  .p-fluid-md { padding: clamp(1rem, 0.8rem + 0.8vw + 0.8vw, 1.5rem); }
+  .p-fluid-lg { padding: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); }
+  .p-fluid-xl { padding: clamp(2rem, 1.6rem + 1.6vw, 3rem); }
+}

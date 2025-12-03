@@ -59,13 +59,15 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
 
   if (loading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Monthly Leaderboard</CardTitle>
-          <CardDescription>Preparing stats...</CardDescription>
+      <Card className="modern-card animate-fade-in">
+        <CardHeader className="cq-p-fluid-md">
+          <CardTitle className="fluid-text-lg">Monthly Leaderboard</CardTitle>
+          <CardDescription className="fluid-text-sm">Preparing stats...</CardDescription>
         </CardHeader>
-        <CardContent>
-          <LoadingLottie message="Loading monthly leaderboard..." />
+        <CardContent className="cq-p-fluid-md">
+          <div className="space-y-4">
+            <LoadingLottie message="Loading monthly leaderboard..." />
+          </div>
         </CardContent>
       </Card>
     )
@@ -73,39 +75,41 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
 
   if (stats.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Monthly Leaderboard</CardTitle>
-          <CardDescription>No data available for this month</CardDescription>
+      <Card className="modern-card animate-fade-in">
+        <CardHeader className="cq-p-fluid-md">
+          <CardTitle className="fluid-text-lg">Monthly Leaderboard</CardTitle>
+          <CardDescription className="fluid-text-sm">No data available for this month</CardDescription>
         </CardHeader>
       </Card>
     )
   }
 
   const getRankIcon = (index: number) => {
-    if (index === 0) return <Trophy className="w-5 h-5 text-yellow-500" />
-    if (index === 1) return <Medal className="w-5 h-5 text-gray-400" />
-    if (index === 2) return <Award className="w-5 h-5 text-amber-600" />
+    if (index === 0) return <Trophy className="w-6 h-6 text-yellow-500 drop-shadow-sm" />
+    if (index === 1) return <Medal className="w-6 h-6 text-gray-400 drop-shadow-sm" />
+    if (index === 2) return <Award className="w-6 h-6 text-amber-600 drop-shadow-sm" />
     return null
   }
 
   const getRankBadge = (index: number) => {
-    if (index === 0) return <Badge className="bg-yellow-500">🥇 1st</Badge>
-    if (index === 1) return <Badge className="bg-gray-400">🥈 2nd</Badge>
-    if (index === 2) return <Badge className="bg-amber-600">🥉 3rd</Badge>
-    return <Badge variant="outline">#{index + 1}</Badge>
+    if (index === 0) return <Badge className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-sm animate-bounce-gentle">🥇 1st</Badge>
+    if (index === 1) return <Badge className="bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-sm">🥈 2nd</Badge>
+    if (index === 2) return <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-sm">🥉 3rd</Badge>
+    return <Badge variant="outline" className="focus-ring">#{index + 1}</Badge>
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="modern-card-gradient elevated-card animate-slide-up">
+      <CardHeader className="cq-p-fluid-md">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" />
+            <CardTitle className="flex items-center gap-3 fluid-text-lg">
+              <div className="p-2 rounded-full bg-primary/10">
+                <TrendingUp className="w-5 h-5 text-primary" />
+              </div>
               Monthly Leaderboard
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="fluid-text-sm">
               {monthData
                 ? `Statistics for ${new Date(monthData + "-01").toLocaleDateString("en-US", { month: "long", year: "numeric" })}`
                 : "Current month statistics"}
@@ -113,14 +117,19 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="cq-p-fluid-md">
+        <div className="space-y-4 container-query">
           {stats.map((stat, index) => (
             <div
               key={stat.employee_id}
-              className={`p-4 rounded-lg border ${
-                index < 3 ? "bg-accent/50 border-primary/20" : "bg-background border-border"
-              }`}
+              className={`
+                p-4 rounded-xl border transition-all duration-300 hover-lift animate-fade-in
+                ${index < 3
+                  ? "bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 dark:from-primary/10 dark:via-primary/20 dark:to-primary/10 border-primary/30 shadow-md"
+                  : "modern-card hover:shadow-lg"
+                }
+              `}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div className="flex items-start gap-3 flex-1">
@@ -130,37 +139,61 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-foreground">{stat.employee_name}</h3>
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <h3 className="fluid-text-base font-semibold text-foreground">{stat.employee_name}</h3>
                       {getRankBadge(index)}
                       {stat.fully_compliant && (
-                        <Badge variant="outline" className="text-green-600 border-green-600">
+                        <Badge variant="outline" className="text-green-600 border-green-600 focus-ring touch-target">
                           ✓ Compliant
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground mb-2 capitalize">{stat.employee_role}</p>
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      <div className="flex items-center gap-1.5">
-                        <Youtube className="w-4 h-4 text-red-500" />
-                        <span className="font-medium">{stat.total_youtube}</span>
-                        <span className="text-muted-foreground">YT</span>
-                        {stat.youtube_extra > 0 && (
-                          <span className="text-xs text-green-600">(+{stat.youtube_extra})</span>
-                        )}
+                    <p className="fluid-text-xs text-muted-foreground mb-3 capitalize font-medium">{stat.employee_role}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 cq-grid-cols-3">
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-red-50/50 dark:bg-red-950/30 border border-red-200/30 dark:border-red-800/30">
+                        <div className="p-1.5 rounded-full bg-red-100 dark:bg-red-900/30">
+                          <Youtube className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1">
+                            <span className="fluid-text-sm font-bold text-red-700 dark:text-red-300">{stat.total_youtube}</span>
+                            <span className="fluid-text-xs text-muted-foreground">YT</span>
+                            {stat.youtube_extra > 0 && (
+                              <span className="fluid-text-xs text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded-full">
+                                +{stat.youtube_extra}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Instagram className="w-4 h-4 text-pink-500" />
-                        <span className="font-medium">{stat.total_instagram}</span>
-                        <span className="text-muted-foreground">IG</span>
-                        {stat.insta_extra > 0 && (
-                          <span className="text-xs text-green-600">(+{stat.insta_extra})</span>
-                        )}
+
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-pink-50/50 dark:bg-pink-950/30 border border-pink-200/30 dark:border-pink-800/30">
+                        <div className="p-1.5 rounded-full bg-pink-100 dark:bg-pink-900/30">
+                          <Instagram className="w-3.5 h-3.5 text-pink-600 dark:text-pink-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1">
+                            <span className="fluid-text-sm font-bold text-pink-700 dark:text-pink-300">{stat.total_instagram}</span>
+                            <span className="fluid-text-xs text-muted-foreground">IG</span>
+                            {stat.insta_extra > 0 && (
+                              <span className="fluid-text-xs text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded-full">
+                                +{stat.insta_extra}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <TrendingUp className="w-4 h-4 text-blue-500" />
-                        <span className="font-semibold text-foreground">{stat.total_uploads}</span>
-                        <span className="text-muted-foreground">Total</span>
+
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200/30 dark:border-blue-800/30">
+                        <div className="p-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                          <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1">
+                            <span className="fluid-text-sm font-bold text-blue-700 dark:text-blue-300">{stat.total_uploads}</span>
+                            <span className="fluid-text-xs text-muted-foreground">Total</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     {stat.days_with_both > 0 && (
@@ -170,16 +203,16 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
                     )}
                   </div>
                 </div>
-                <div className="text-left md:text-right shrink-0">
+                <div className="text-left md:text-right shrink-0 cq-text-right">
                   {!stat.fully_compliant && (
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       {!stat.insta_compliant && (
-                        <Badge variant="destructive" className="text-xs">
+                        <Badge variant="destructive" className="fluid-text-xs shadow-sm focus-ring touch-target">
                           IG: {stat.total_instagram}/{stat.required_instagram}
                         </Badge>
                       )}
                       {!stat.youtube_compliant && (
-                        <Badge variant="destructive" className="text-xs">
+                        <Badge variant="destructive" className="fluid-text-xs shadow-sm focus-ring touch-target">
                           YT: {stat.total_youtube}/{stat.required_youtube}
                         </Badge>
                       )}
@@ -190,12 +223,21 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
             </div>
           ))}
         </div>
-        <div className="mt-4 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground">
-          <p className="font-semibold mb-1">Requirements:</p>
-          <ul className="list-disc list-inside space-y-0.5">
-            <li>Instagram: 1 post per day (mandatory)</li>
-            <li>YouTube: 3 videos per week (mandatory)</li>
-            <li>Extra uploads are tracked and displayed</li>
+        <div className="mt-6 p-4 bg-gradient-to-r from-muted/30 via-muted/50 to-muted/30 dark:from-muted/50 dark:via-muted/70 dark:to-muted/50 rounded-xl border border-border/50">
+          <p className="fluid-text-sm font-semibold mb-3 text-foreground/90">📋 Requirements:</p>
+          <ul className="space-y-2 fluid-text-xs text-muted-foreground">
+            <li className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-pink-500"></div>
+              <span><strong className="text-pink-600 dark:text-pink-400">Instagram:</strong> 1 post per day (mandatory)</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+              <span><strong className="text-red-600 dark:text-red-400">YouTube:</strong> 3 videos per week (mandatory)</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+              <span><strong className="text-blue-600 dark:text-blue-400">Extra uploads</strong> are tracked and displayed</span>
+            </li>
           </ul>
         </div>
       </CardContent>

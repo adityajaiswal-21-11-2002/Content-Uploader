@@ -5,12 +5,13 @@ import type { Employee } from "@/lib/types"
 import EmployeeCard from "@/components/employee-card"
 import MonthlyLeaderboard from "@/components/monthly-leaderboard"
 import AnalyticsDashboard from "@/components/analytics/analytics-dashboard"
-import Link from "next/link"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ResponsiveNavLayout } from "@/components/responsive-nav-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, CheckCircle2, Clock } from "lucide-react"
+import { AlertCircle, CheckCircle2, Clock, Users, Trophy, BarChart3 } from "lucide-react"
 import { formatDateISO } from "@/lib/helpers"
 import { LoadingLottie } from "@/components/ui/loading-lottie"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 interface ComplianceSummary {
   employee_id: number
@@ -87,9 +88,60 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingLottie message="Loading employees..." />
-      </div>
+      <ResponsiveNavLayout
+        navItems={[
+          {
+            title: "All Employees",
+            url: "/",
+            icon: Users,
+          },
+          {
+            title: "Monthly Leaderboard",
+            url: "/leaderboard",
+            icon: Trophy,
+          },
+          {
+            title: "Analytics",
+            url: "/analytics",
+            icon: BarChart3,
+          },
+        ]}
+        title="Content Upload Tracker"
+        subtitle="Track daily and weekly uploads"
+      >
+        <div className="space-y-6 animate-fade-in">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1">
+              <h1 className="fluid-text-2xl font-bold">Content Upload Tracker</h1>
+              <p className="fluid-text-sm text-muted-foreground">
+                Track daily and weekly uploads • 1 Instagram/day • 3 YouTube/week
+              </p>
+            </div>
+            <Button asChild>
+              <Link href="/admin">Admin Dashboard</Link>
+            </Button>
+          </div>
+
+          <Card className="modern-card-gradient animate-slide-up">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                Today's Status ({formatDateISO(new Date())})
+              </CardTitle>
+              <CardDescription>Daily compliance overview</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SkeletonStatsGrid />
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonEmployeeCard key={i} className="animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }} />
+            ))}
+          </div>
+        </div>
+      </ResponsiveNavLayout>
     )
   }
 
@@ -118,93 +170,121 @@ export default function HomePage() {
   const nonCompliantToday = complianceSummary.filter((s) => !s.today_compliant).length
   const compliantToday = complianceSummary.filter((s) => s.today_compliant).length
 
-  return (
-    <div className="min-h-screen bg-background px-4 py-6 sm:p-6">
-      <div className="max-w-7xl mx-auto w-full">
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex-1 space-y-2">
-            <h1 className="text-4xl font-bold text-foreground mb-2">Content Upload Tracker</h1>
-            <p className="text-muted-foreground">
-              Track daily and weekly uploads • 1 Instagram/day • 3 YouTube/week
-            </p>
-          </div>
-          <Link
-            href="/admin"
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition text-center w-full md:w-auto"
-          >
-            Admin Dashboard
-          </Link>
-        </div>
+  const navItems = [
+    {
+      title: "All Employees",
+      url: "/",
+      icon: Users,
+    },
+    {
+      title: "Monthly Leaderboard",
+      url: "/leaderboard",
+      icon: Trophy,
+    },
+    {
+      title: "Analytics",
+      url: "/analytics",
+      icon: BarChart3,
+    },
+  ]
 
+  const stats = {
+    compliant: compliantToday,
+    nonCompliant: nonCompliantToday,
+    total: employees.length,
+  }
+
+  const headerContent = (
+    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold">Content Upload Tracker</h1>
+        <p className="text-sm text-muted-foreground">
+          Track daily and weekly uploads • 1 Instagram/day • 3 YouTube/week
+        </p>
+      </div>
+      <Button asChild>
+        <Link href="/admin">Admin Dashboard</Link>
+      </Button>
+    </div>
+  )
+
+  return (
+    <ResponsiveNavLayout
+      navItems={navItems}
+      headerContent={headerContent}
+      stats={stats}
+      title="Content Upload Tracker"
+      subtitle="Track daily and weekly uploads"
+    >
+      <div className="space-y-6">
         {/* Today's Compliance Summary */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              Today's Status ({today})
+        <Card className="modern-card-gradient elevated-card animate-slide-up">
+          <CardHeader className="cq-p-fluid-md">
+            <CardTitle className="flex items-center gap-3 fluid-text-lg">
+              <div className="p-2 rounded-full bg-primary/10">
+                <Clock className="w-5 h-5 text-primary" />
+              </div>
+              <span>Today's Status ({today})</span>
             </CardTitle>
-            <CardDescription>Daily compliance overview</CardDescription>
+            <CardDescription className="fluid-text-sm">Daily compliance overview</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800">
-                <div className="flex items-center gap-2 mb-1">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  <span className="font-semibold text-green-900 dark:text-green-100">Compliant</span>
+          <CardContent className="cq-p-fluid-md">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 cq-grid-cols-3">
+              <div className="group p-5 rounded-xl bg-gradient-to-br from-green-50 via-green-100/50 to-emerald-50 dark:from-green-950/50 dark:via-green-900/30 dark:to-emerald-950/50 border border-green-200/50 dark:border-green-800/50 hover:shadow-lg transition-all duration-300 hover-lift">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/30 group-hover:scale-110 transition-transform duration-200">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <span className="fluid-text-sm font-semibold text-green-900 dark:text-green-100">Compliant</span>
                 </div>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{compliantToday}</p>
-                <p className="text-xs text-green-600 dark:text-green-400">employees uploaded today</p>
+                <p className="fluid-text-2xl font-bold text-green-700 dark:text-green-300 mb-1">{compliantToday}</p>
+                <p className="fluid-text-xs text-green-600 dark:text-green-400">employees uploaded today</p>
               </div>
-              <div className="p-4 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800">
-                <div className="flex items-center gap-2 mb-1">
-                  <AlertCircle className="w-5 h-5 text-red-600" />
-                  <span className="font-semibold text-red-900 dark:text-red-100">Not Compliant</span>
+
+              <div className="group p-5 rounded-xl bg-gradient-to-br from-red-50 via-red-100/50 to-rose-50 dark:from-red-950/50 dark:via-red-900/30 dark:to-rose-950/50 border border-red-200/50 dark:border-red-800/50 hover:shadow-lg transition-all duration-300 hover-lift">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 rounded-full bg-red-100 dark:bg-red-900/30 group-hover:scale-110 transition-transform duration-200">
+                    <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                  </div>
+                  <span className="fluid-text-sm font-semibold text-red-900 dark:text-red-100">Not Compliant</span>
                 </div>
-                <p className="text-2xl font-bold text-red-700 dark:text-red-300">{nonCompliantToday}</p>
-                <p className="text-xs text-red-600 dark:text-red-400">employees missed today</p>
+                <p className="fluid-text-2xl font-bold text-red-700 dark:text-red-300 mb-1">{nonCompliantToday}</p>
+                <p className="fluid-text-xs text-red-600 dark:text-red-400">employees missed today</p>
               </div>
-              <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-blue-900 dark:text-blue-100">Total Employees</span>
+
+              <div className="group p-5 rounded-xl bg-gradient-to-br from-blue-50 via-blue-100/50 to-indigo-50 dark:from-blue-950/50 dark:via-blue-900/30 dark:to-indigo-950/50 border border-blue-200/50 dark:border-blue-800/50 hover:shadow-lg transition-all duration-300 hover-lift">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30 group-hover:scale-110 transition-transform duration-200">
+                    <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <span className="fluid-text-sm font-semibold text-blue-900 dark:text-blue-100">Total Employees</span>
                 </div>
-                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{employees.length}</p>
-                <p className="text-xs text-blue-600 dark:text-blue-400">active team members</p>
+                <p className="fluid-text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">{employees.length}</p>
+                <p className="fluid-text-xs text-blue-600 dark:text-blue-400">active team members</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="employees" className="space-y-6">
-          <TabsList className="flex flex-wrap gap-2 sm:grid sm:grid-cols-3">
-            <TabsTrigger value="employees">All Employees</TabsTrigger>
-            <TabsTrigger value="leaderboard">Monthly Leaderboard</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="employees">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {employees.map((employee) => {
-                const summary = complianceSummary.find((s) => s.employee_id === employee.id)
-                return (
-                  <EmployeeCard
-                    key={employee.id}
-                    employee={employee}
-                    complianceSummary={summary}
-                  />
-                )
-              })}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="leaderboard">
-            <MonthlyLeaderboard />
-          </TabsContent>
-
-          <TabsContent value="analytics">
-            <AnalyticsDashboard />
-          </TabsContent>
-        </Tabs>
+        {/* Employee Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 container-query">
+          {employees.map((employee, index) => {
+            const summary = complianceSummary.find((s) => s.employee_id === employee.id)
+            return (
+              <div
+                key={employee.id}
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <EmployeeCard
+                  employee={employee}
+                  complianceSummary={summary}
+                />
+              </div>
+            )
+          })}
+        </div>
       </div>
-    </div>
+    </ResponsiveNavLayout>
   )
 }

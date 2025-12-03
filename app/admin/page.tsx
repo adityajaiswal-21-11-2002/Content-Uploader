@@ -7,10 +7,10 @@ import WeeklyComplianceTable from "@/components/admin/weekly-compliance-table"
 import MonthlyLeaderboard from "@/components/monthly-leaderboard"
 import AnalyticsDashboard from "@/components/analytics/analytics-dashboard"
 import UploadedVideosTable from "@/components/admin/uploaded-videos-table"
+import { ResponsiveNavLayout } from "@/components/responsive-nav-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import Link from "next/link"
 import { LoadingLottie } from "@/components/ui/loading-lottie"
+import { FileText, Calendar, Award, BarChart3, Video, Home } from "lucide-react"
 
 export default function AdminDashboardPage() {
   const [complianceData, setComplianceData] = useState<any[]>([])
@@ -57,101 +57,60 @@ export default function AdminDashboardPage() {
     )
   }
 
-  return (
-    <div className="min-h-screen bg-background px-4 py-6 sm:p-6">
-      <div className="max-w-7xl mx-auto w-full">
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex-1 space-y-2">
-            <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage compliance and topics for all employees</p>
-          </div>
-          <Link
-            href="/"
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition text-center w-full md:w-auto"
-          >
-            Back to Main
-          </Link>
-        </div>
+  const navItems = [
+    {
+      title: "Daily Compliance",
+      url: "/admin",
+      icon: FileText,
+    },
+    {
+      title: "Weekly Compliance",
+      url: "/admin/weekly",
+      icon: Calendar,
+    },
+    {
+      title: "Monthly Awards",
+      url: "/admin/monthly",
+      icon: Award,
+    },
+    {
+      title: "Analytics",
+      url: "/admin/analytics",
+      icon: BarChart3,
+    },
+    {
+      title: "Uploaded Videos",
+      url: "/admin/videos",
+      icon: Video,
+    },
+  ]
 
-        {employees.length === 0 && !loading && (
-          <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-lg">
-            <p className="font-semibold">Database Not Configured</p>
-            <p className="text-sm mt-1">
-              Please set up your DATABASE_URL environment variable in the Vercel dashboard to use this application.
-            </p>
-          </div>
-        )}
-
-        <Tabs defaultValue="daily" className="space-y-6">
-          <TabsList className="flex flex-wrap gap-2 sm:grid sm:grid-cols-5">
-            <TabsTrigger value="daily">Daily Compliance</TabsTrigger>
-            <TabsTrigger value="weekly">Weekly Compliance</TabsTrigger>
-            <TabsTrigger value="monthly">Monthly Awards</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="videos">Uploaded Videos</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="daily">
-            <Card>
-              <CardHeader>
-                <CardTitle>Daily Compliance Status</CardTitle>
-                <CardDescription>Today's upload status for all employees</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <DailyComplianceTable complianceData={complianceData} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="weekly">
-            <Card>
-              <CardHeader>
-                <CardTitle>Weekly Compliance Status</CardTitle>
-                <CardDescription>This week's upload counts vs quotas</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <WeeklyComplianceTable employees={employees} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="monthly">
-            <Card>
-              <CardHeader>
-                <CardTitle>Monthly Awards & Leaderboard</CardTitle>
-                <CardDescription>Top performers and monthly statistics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <MonthlyLeaderboard />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="analytics">
-            <Card>
-              <CardHeader>
-                <CardTitle>Analytics Dashboard</CardTitle>
-                <CardDescription>Charts and graphs for upload analytics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <AnalyticsDashboard />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="videos">
-            <Card>
-              <CardHeader>
-                <CardTitle>Uploaded Videos</CardTitle>
-                <CardDescription>View all uploaded videos with links for each employee</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <UploadedVideosTable />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+  const headerContent = employees.length === 0 && !loading ? (
+    <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-lg dark:bg-yellow-900 dark:border-yellow-600 dark:text-yellow-200">
+      <p className="font-semibold">Database Not Configured</p>
+      <p className="text-sm mt-1">
+        Please set up your DATABASE_URL environment variable in the Vercel dashboard to use this application.
+      </p>
     </div>
+  ) : null
+
+  return (
+    <ResponsiveNavLayout
+      navItems={navItems}
+      headerContent={headerContent}
+      showBackToMain={true}
+      title="Admin Dashboard"
+      subtitle="Manage compliance and topics"
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle>Daily Compliance Status</CardTitle>
+          <CardDescription>Today's upload status for all employees</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DailyComplianceTable complianceData={complianceData} />
+        </CardContent>
+      </Card>
+    </ResponsiveNavLayout>
   )
 }

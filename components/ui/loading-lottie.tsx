@@ -52,22 +52,35 @@ export function LoadingLottie({ message = "Loading...", className }: LoadingLott
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 py-8 text-muted-foreground",
+        "flex flex-col items-center justify-center gap-4 py-12 text-muted-foreground animate-fade-in",
         className,
       )}
     >
       {animationData && !error ? (
-        <Lottie
-          animationData={animationData}
-          loop
-          autoplay
-          style={{ width: 160, height: 160 }}
-        />
+        <div className="relative">
+          <Lottie
+            animationData={animationData}
+            loop
+            autoplay
+            style={{ width: 160, height: 160 }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent rounded-full blur-xl" />
+        </div>
       ) : (
-        // Simple fallback spinner while Lottie loads or if it fails
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+        // Enhanced fallback spinner with modern design
+        <div className="relative">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary/20 border-t-primary shadow-lg" />
+          <div className="absolute inset-0 h-12 w-12 animate-ping rounded-full border-2 border-primary/10" />
+        </div>
       )}
-      <p className="text-sm">{message}</p>
+      <div className="text-center space-y-2">
+        <p className="fluid-text-sm font-medium">{message}</p>
+        <div className="flex items-center gap-1">
+          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
     </div>
   )
 }
