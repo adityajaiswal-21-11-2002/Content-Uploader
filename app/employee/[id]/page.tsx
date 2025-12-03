@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label"
 import { formatDateISO, getRequiredQuota } from "@/lib/helpers"
 import { ArrowLeft, CheckCircle2, Circle, Youtube, Instagram, AlertCircle, Clock } from "lucide-react"
 import { toast } from "sonner"
+import { LoadingLottie } from "@/components/ui/loading-lottie"
 
 interface TodayTopics {
   date: string
@@ -247,7 +248,7 @@ export default function EmployeeDashboardPage() {
   if (loading || !employee) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-foreground">Loading...</p>
+        <LoadingLottie message="Loading employee dashboard..." />
       </div>
     )
   }

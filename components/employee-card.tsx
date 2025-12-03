@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { formatDateISO, getRequiredQuota } from "@/lib/helpers"
 import { CheckCircle2, Circle, AlertCircle, Youtube, Instagram, TrendingUp } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 
 interface EmployeeCardProps {
   employee: Employee
@@ -89,7 +90,10 @@ export default function EmployeeCard({ employee, complianceSummary }: EmployeeCa
         </CardHeader>
         <CardContent className="space-y-4">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Spinner className="text-muted-foreground" />
+              <span>Loading data...</span>
+            </div>
           ) : (
             <>
               <div className="space-y-2">

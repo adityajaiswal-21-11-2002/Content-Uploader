@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { ExternalLink, Instagram, Youtube } from "lucide-react"
 import { formatDateISO } from "@/lib/helpers"
+import { LoadingLottie } from "@/components/ui/loading-lottie"
 
 interface Video {
   id: string
@@ -120,7 +121,7 @@ export default function DailyLinksTable() {
       </CardHeader>
       <CardContent>
         {loading ? (
-          <p className="text-sm text-muted-foreground">Loading links...</p>
+          <LoadingLottie message="Loading daily links..." />
         ) : error ? (
           <p className="text-sm text-destructive">{error}</p>
         ) : rows.length === 0 ? (

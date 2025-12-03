@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, Medal, Award, Youtube, Instagram, TrendingUp } from "lucide-react"
+import { LoadingLottie } from "@/components/ui/loading-lottie"
 
 interface MonthlyStat {
   employee_id: number
@@ -61,8 +62,11 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
       <Card>
         <CardHeader>
           <CardTitle>Monthly Leaderboard</CardTitle>
-          <CardDescription>Loading...</CardDescription>
+          <CardDescription>Preparing stats...</CardDescription>
         </CardHeader>
+        <CardContent>
+          <LoadingLottie message="Loading monthly leaderboard..." />
+        </CardContent>
       </Card>
     )
   }

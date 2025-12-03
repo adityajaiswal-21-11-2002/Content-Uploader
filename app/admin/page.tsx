@@ -10,6 +10,7 @@ import UploadedVideosTable from "@/components/admin/uploaded-videos-table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
+import { LoadingLottie } from "@/components/ui/loading-lottie"
 
 export default function AdminDashboardPage() {
   const [complianceData, setComplianceData] = useState<any[]>([])
@@ -51,7 +52,7 @@ export default function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-foreground">Loading admin dashboard...</p>
+        <LoadingLottie message="Loading admin dashboard..." />
       </div>
     )
   }

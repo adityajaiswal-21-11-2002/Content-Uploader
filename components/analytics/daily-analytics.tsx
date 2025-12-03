@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, BarChart, Line, LineChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Area, AreaChart } from "recharts"
+import { Bar, BarChart, Line, LineChart, XAxis, YAxis, CartesianGrid, Legend, Area, AreaChart } from "recharts"
 import { Youtube, Instagram, TrendingUp } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { LoadingLottie } from "@/components/ui/loading-lottie"
 
 interface DailyAnalyticsProps {
   employeeId?: number
@@ -37,7 +38,7 @@ export default function DailyAnalytics({ employeeId, days = 30 }: DailyAnalytics
   }, [employeeId, selectedDays])
 
   if (loading) {
-    return <div className="text-center py-8 text-muted-foreground">Loading analytics...</div>
+    return <LoadingLottie message="Loading daily analytics..." />
   }
 
   if (!data || !data.data || data.data.length === 0) {

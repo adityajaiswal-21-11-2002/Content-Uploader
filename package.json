@@ -57,6 +57,7 @@
     "input-otp": "1.4.1",
     "kerberos": "latest",
     "lucide-react": "^0.454.0",
+    "lottie-react": "^2.4.0",
     "mongodb": "latest",
     "mongodb-client-encryption": "latest",
     "next": "16.0.3",

@@ -5,6 +5,7 @@ import type { DailyUploadRecord } from "@/lib/types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Youtube, Instagram, CheckCircle2, Circle, Calendar } from "lucide-react"
 import { formatDateISO } from "@/lib/helpers"
+import { Spinner } from "@/components/ui/spinner"
 
 interface DailyTrackingCalendarProps {
   employeeId: number
@@ -74,7 +75,10 @@ export default function DailyTrackingCalendar({ employeeId, days = 30 }: DailyTr
           <CardDescription>Last {days} days</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Loading daily records...</p>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Spinner />
+            <span>Loading daily records...</span>
+          </div>
         </CardContent>
       </Card>
     )

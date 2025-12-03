@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, BarChart, Line, LineChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from "recharts"
+import { Bar, BarChart, Line, LineChart, XAxis, YAxis, CartesianGrid, Legend } from "recharts"
 import { Youtube, Instagram, Users, TrendingUp } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { LoadingLottie } from "@/components/ui/loading-lottie"
 
 interface AllEmployeesOverviewProps {
   view?: "daily" | "weekly" | "monthly"
@@ -85,7 +86,7 @@ export default function AllEmployeesOverview({ view = "daily" }: AllEmployeesOve
   }
 
   if (loading && !dailyData) {
-    return <div className="text-center py-8 text-muted-foreground">Loading employee overview...</div>
+    return <LoadingLottie message="Loading employee overview..." />
   }
 
   // Prepare daily comparison data

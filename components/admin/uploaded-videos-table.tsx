@@ -4,8 +4,9 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Youtube, Instagram, ExternalLink, Loader2 } from "lucide-react"
+import { Youtube, Instagram, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { LoadingLottie } from "@/components/ui/loading-lottie"
 
 interface Video {
   id: string
@@ -81,12 +82,7 @@ export default function UploadedVideosTable() {
   }
 
   if (loading) {
-    return (
-      <div className="text-center py-8">
-        <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-muted-foreground" />
-        <p className="text-muted-foreground">Loading videos...</p>
-      </div>
-    )
+    return <LoadingLottie message="Loading uploaded videos..." />
   }
 
   return (

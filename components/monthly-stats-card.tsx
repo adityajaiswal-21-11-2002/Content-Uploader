@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Youtube, Instagram, TrendingUp, CheckCircle2, AlertCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Spinner } from "@/components/ui/spinner"
 
 interface MonthlyStatsCardProps {
   employeeId: number
@@ -49,7 +50,12 @@ export default function MonthlyStatsCard({ employeeId }: MonthlyStatsCardProps) 
   }, [employeeId])
 
   if (loading) {
-    return <p className="text-sm text-muted-foreground">Loading monthly statistics...</p>
+    return (
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Spinner />
+        <span>Loading monthly statistics...</span>
+      </div>
+    )
   }
 
   if (!stats) {

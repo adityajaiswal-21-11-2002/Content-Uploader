@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, BarChart, Line, LineChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Cell } from "recharts"
+import { Bar, BarChart, Line, LineChart, XAxis, YAxis, CartesianGrid, Legend } from "recharts"
 import { Youtube, Instagram, Users } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { LoadingLottie } from "@/components/ui/loading-lottie"
 
 interface EmployeeTrackingProps {
   employeeId?: number
@@ -107,7 +108,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
   }
 
   if (loading && !dailyData) {
-    return <div className="text-center py-8 text-muted-foreground">Loading tracking data...</div>
+    return <LoadingLottie message="Loading employee tracking..." />
   }
 
   // Prepare daily chart data

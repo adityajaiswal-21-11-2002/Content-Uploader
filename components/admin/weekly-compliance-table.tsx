@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { CheckCircle2, AlertCircle, Mail, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import { LoadingLottie } from "@/components/ui/loading-lottie"
 
 export default function WeeklyComplianceTable({ employees }: { employees: any[] }) {
   const [weekSummary, setWeekSummary] = useState<any>(null)
@@ -76,12 +77,7 @@ export default function WeeklyComplianceTable({ employees }: { employees: any[] 
   }
 
   if (loading) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
-        <p>Loading weekly summary...</p>
-      </div>
-    )
+    return <LoadingLottie message="Loading weekly summary..." />
   }
 
   if (!weekSummary || !weekSummary.summary || weekSummary.summary.length === 0) {
