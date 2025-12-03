@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AlertCircle, CheckCircle2, Clock, Users, Trophy, BarChart3 } from "lucide-react"
 import { formatDateISO } from "@/lib/helpers"
 import { LoadingLottie } from "@/components/ui/loading-lottie"
+import { SkeletonStatsGrid, SkeletonEmployeeCard } from "@/components/ui/skeleton-loading"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
