@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 
 /**
- * Cron job endpoint: Daily Topic Generator (8:00 AM)
+ * Cron job endpoint: Daily & Weekly Topic Generator (8:00 AM)
+ * Generates YouTube topics daily, Instagram topics weekly on Mondays
  * This should be triggered by Vercel Cron or external cron service
- * 
+ *
  * To set up Vercel Cron, add to vercel.json:
  * {
  *   "crons": [{
@@ -27,9 +28,11 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Call the topic generation endpoint
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin
-    const response = await fetch(`${baseUrl}/api/topics/generate`, {
+    const results = []
+
+    // Always generate YouTube topics daily
+    const youtubeResponse = await fetch(`${baseUrl}/api/topics/generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,19 +40,46 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    const data = await response.json()
+    const youtubeData = await youtubeResponse.json()
 
-    if (!response.ok) {
+    if (!youtubeResponse.ok) {
       return NextResponse.json(
-        { error: "Failed to generate topics", details: data },
-        { status: response.status }
+        { error: "Failed to generate YouTube topics", details: youtubeData },
+        { status: youtubeResponse.status }
       )
+    }
+
+    results.push({ type: "youtube", data: youtubeData })
+
+    // Check if today is Monday (day 1) and generate Instagram topics
+    const today = new Date()
+    const isMonday = today.getDay() === 1
+
+    if (isMonday) {
+      const instagramResponse = await fetch(`${baseUrl}/api/topics/generate-weekly-insta`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(cronSecret && { Authorization: `Bearer ${cronSecret}` }),
+        },
+      })
+
+      const instagramData = await instagramResponse.json()
+
+      if (!instagramResponse.ok) {
+        console.error("Failed to generate Instagram topics:", instagramData)
+        // Don't fail the whole request, just log the error
+        results.push({ type: "instagram", error: instagramData })
+      } else {
+        results.push({ type: "instagram", data: instagramData })
+      }
     }
 
     return NextResponse.json({
       success: true,
-      message: "Daily topics generated successfully",
-      data,
+      message: `Topics generated successfully${isMonday ? ' (YouTube + Instagram)' : ' (YouTube only)'}`,
+      is_monday: isMonday,
+      results,
     })
   } catch (error) {
     console.error("Error in daily topics cron job:", error)
