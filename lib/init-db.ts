@@ -19,6 +19,7 @@ export async function initializeDatabase() {
   const collectionsToClear = [
     "employees",
     "topics_daily",
+    "topics_weekly",
     "uploads",
     "extra_uploads",
     "daily_uploads",
@@ -116,6 +117,7 @@ export async function initializeDatabase() {
   await employeesCollection.createIndex({ email: 1 }, { unique: true })
 
   await db.collection("topics_daily").createIndex({ date: 1, employee_id: 1, platform: 1 })
+  await db.collection("topics_weekly").createIndex({ week_start: 1, employee_id: 1, platform: 1 })
   await db.collection("uploads").createIndex({ employee_id: 1, date: 1, platform: 1 })
   await db.collection("extra_uploads").createIndex({ employee_id: 1, date: 1, platform: 1 })
   await db.collection("daily_uploads").createIndex({ employee_id: 1, date: 1 }, { unique: true })

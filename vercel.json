@@ -5,6 +5,10 @@
       "schedule": "0 8 * * *"
     },
     {
+      "path": "/api/cron/weekly-insta-topics",
+      "schedule": "0 8 * * 1"
+    },
+    {
       "path": "/api/cron/weekly-check",
       "schedule": "59 23 * * *"
     }

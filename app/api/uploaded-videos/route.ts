@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db"
-import { formatDateISO } from "@/lib/helpers"
+import { formatDateISO, getWeekStartDate } from "@/lib/helpers"
 
 /**
  * GET /api/uploaded-videos
@@ -57,18 +57,49 @@ export async function GET(request: Request) {
     const employees = await db.collection("employees").find({}).toArray()
     const employeeMap = new Map(employees.map((e) => [e.id, e]))
 
-    // Get topics for additional context
-    const topics = await db
+    // Get daily topics (YouTube) for additional context
+    const dailyTopics = await db
       .collection("topics_daily")
       .find({
         date: { $gte: startDateStr, $lte: endDateStr },
       })
       .toArray()
 
+    // Get weekly topics (Instagram) for additional context
+    // Find all week starts within the date range
+    const weekStarts = new Set<string>()
+    let currentDate = new Date(startDate)
+    while (currentDate <= endDate) {
+      const weekStart = getWeekStartDate(currentDate)
+      weekStarts.add(formatDateISO(weekStart))
+      currentDate.setDate(currentDate.getDate() + 7) // Move to next week
+    }
+
+    const weeklyTopics = await db
+      .collection("topics_weekly")
+      .find({
+        week_start: { $in: Array.from(weekStarts) },
+      })
+      .toArray()
+
     const topicMap = new Map()
-    topics.forEach((t) => {
+    // Add daily topics (YouTube)
+    dailyTopics.forEach((t) => {
       const key = `${t.employee_id}-${t.date}-${t.platform}`
       topicMap.set(key, t.topic)
+    })
+    // Add weekly topics (Instagram) - map to each day of the week
+    weeklyTopics.forEach((t) => {
+      // For each day in the week, map the Instagram topic
+      let weekDate = new Date(t.week_start)
+      for (let i = 0; i < 7; i++) {
+        const dateStr = formatDateISO(weekDate)
+        if (dateStr >= startDateStr && dateStr <= endDateStr) {
+          const key = `${t.employee_id}-${dateStr}-${t.platform}`
+          topicMap.set(key, t.topic)
+        }
+        weekDate.setDate(weekDate.getDate() + 1)
+      }
     })
 
     // Build video list

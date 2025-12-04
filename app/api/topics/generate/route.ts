@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db"
-import { generateCoderTopics, generatePeeperTopics, generateInstagramTopics } from "@/lib/openai"
+import { generateCoderTopics, generatePeeperTopics } from "@/lib/openai"
 import { formatDateISO } from "@/lib/helpers"
 
 /**
@@ -30,15 +30,14 @@ export async function POST(request: Request) {
       (e) => e.role === "peeper" && (e.weekly_required_yt ?? 3) > 0
     )
 
-    // Generate topics using OpenAI (skip YT topic generation if no employees for that group)
-    const [coderTopicsResponse, peeperTopicsResponse, instaTopicsResponse] = await Promise.all([
+    // Generate YouTube topics using OpenAI (skip if no employees for that group)
+    const [coderTopicsResponse, peeperTopicsResponse] = await Promise.all([
       coders.length
         ? generateCoderTopics(coders.map((e) => e.name))
         : Promise.resolve({ coder_topics: [] }),
       peepers.length
         ? generatePeeperTopics(peepers.map((e) => e.name))
         : Promise.resolve({ peeper_topics: [] }),
-      generateInstagramTopics(),
     ])
 
     const topicsCollection = db.collection("topics_daily")
@@ -73,26 +72,12 @@ export async function POST(request: Request) {
       }
     }
 
-    // Save Instagram topics for all employees (shared topics)
-    for (const employee of employees) {
-      for (const instaTopic of instaTopicsResponse.insta_topics ?? []) {
-        await topicsCollection.insertOne({
-          date: today,
-          employee_id: employee.id,
-          platform: "instagram",
-          topic: instaTopic,
-          status: "pending",
-          created_at: new Date(),
-        })
-      }
-    }
 
     return Response.json({
       success: true,
-      message: `Generated topics for ${today}`,
+      message: `Generated YouTube topics for ${today}`,
       coder_topics: coderTopicsResponse.coder_topics?.length ?? 0,
       peeper_topics: peeperTopicsResponse.peeper_topics?.length ?? 0,
-      insta_topics: instaTopicsResponse.insta_topics?.length ?? 0,
     })
   } catch (error) {
     console.error("Error generating topics:", error)

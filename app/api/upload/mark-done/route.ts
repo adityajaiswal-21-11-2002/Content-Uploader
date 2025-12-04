@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db"
-import { formatDateISO } from "@/lib/helpers"
+import { formatDateISO, getWeekStartDate } from "@/lib/helpers"
 import { ObjectId } from "mongodb"
 
 /**
@@ -41,6 +41,8 @@ export async function POST(request: Request) {
 
     const db = await connectToDatabase()
     const today = formatDateISO(new Date())
+    const weekStart = getWeekStartDate(new Date())
+    const weekStartStr = formatDateISO(weekStart)
     const employeeIdNum = Number.parseInt(employee_id)
 
     // Insert or update upload record in uploads collection
@@ -104,66 +106,129 @@ export async function POST(request: Request) {
     )
 
     // Update topic status to completed if exists
-    // If topic_id is provided, update only that specific topic
-    // Otherwise, update all topics for that platform on that day
-    const topicQuery: any = {
-      employee_id: employeeIdNum,
-      platform,
-      date: today,
-    }
+    // Use different logic for daily (YouTube) vs weekly (Instagram) topics
+    if (platform === "youtube") {
+      // Daily topics for YouTube
+      const topicQuery: any = {
+        employee_id: employeeIdNum,
+        platform,
+        date: today,
+      }
 
-    // If topic_id is provided, update only that specific topic
-    if (body.topic_id) {
-      try {
-        // Try to convert topic_id to ObjectId
-        let topicObjectId: ObjectId | string = body.topic_id
+      // If topic_id is provided, update only that specific topic
+      if (body.topic_id) {
         try {
-          topicObjectId = new ObjectId(body.topic_id)
-        } catch (error) {
-          // If it's not a valid ObjectId format, use as string
-          console.log("Topic ID is not ObjectId format, using as string:", body.topic_id)
-        }
-
-        // Update the specific topic
-        const result = await db.collection("topics_daily").updateOne(
-          {
-            _id: topicObjectId,
+          let query: any = {
             employee_id: employeeIdNum,
             platform,
             date: today,
-          },
-          {
-            $set: {
-              status: "completed",
-            },
           }
-        )
 
-        // If no topic was found with that ID, fall back to updating all topics
-        if (result.matchedCount === 0) {
-          console.warn(`Topic ${body.topic_id} not found, updating all topics for platform`)
+          // Try to convert topic_id to ObjectId
+          try {
+            query._id = new ObjectId(body.topic_id)
+          } catch (error) {
+            // If it's not a valid ObjectId format, use as string
+            console.log("Topic ID is not ObjectId format, using as string:", body.topic_id)
+            query._id = body.topic_id
+          }
+
+          // Update the specific topic
+          const result = await db.collection("topics_daily").updateOne(query,
+            {
+              $set: {
+                status: "completed",
+              },
+            }
+          )
+
+          // If no topic was found with that ID, fall back to updating all topics
+          if (result.matchedCount === 0) {
+            console.warn(`Topic ${body.topic_id} not found, updating all topics for platform`)
+            await db.collection("topics_daily").updateMany(topicQuery, {
+              $set: {
+                status: "completed",
+              },
+            })
+          }
+        } catch (error) {
+          // If there's an error, fall back to updating all topics
+          console.error("Error updating topic by ID, updating all topics for platform:", error)
           await db.collection("topics_daily").updateMany(topicQuery, {
             $set: {
               status: "completed",
             },
           })
         }
-      } catch (error) {
-        // If there's an error, fall back to updating all topics
-        console.error("Error updating topic by ID, updating all topics for platform:", error)
+      } else {
+        // No topic_id provided, update all topics for that platform
         await db.collection("topics_daily").updateMany(topicQuery, {
           $set: {
             status: "completed",
           },
         })
       }
-    } else {
-      // No topic_id provided, update all topics for that platform
-      await db.collection("topics_daily").updateMany(topicQuery, {
-        $set: {
-          status: "completed",
-        },
-      })
+    } else if (platform === "instagram") {
+      // Weekly topics for Instagram
+      const topicQuery: any = {
+        employee_id: employeeIdNum,
+        platform,
+        week_start: weekStartStr,
+      }
+
+      // If topic_id is provided, update only that specific topic
+      if (body.topic_id) {
+        try {
+          let query: any = {
+            employee_id: employeeIdNum,
+            platform,
+            week_start: weekStartStr,
+          }
+
+          // Try to convert topic_id to ObjectId
+          try {
+            query._id = new ObjectId(body.topic_id)
+          } catch (error) {
+            // If it's not a valid ObjectId format, use as string
+            console.log("Topic ID is not ObjectId format, using as string:", body.topic_id)
+            query._id = body.topic_id
+          }
+
+          // Update the specific topic
+          const result = await db.collection("topics_weekly").updateOne(query,
+            {
+              $set: {
+                status: "completed",
+              },
+            }
+          )
+
+          // If no topic was found with that ID, fall back to updating all topics
+          if (result.matchedCount === 0) {
+            console.warn(`Topic ${body.topic_id} not found, updating all topics for platform`)
+            await db.collection("topics_weekly").updateMany(topicQuery, {
+              $set: {
+                status: "completed",
+              },
+            })
+          }
+        } catch (error) {
+          // If there's an error, fall back to updating all topics
+          console.error("Error updating topic by ID, updating all topics for platform:", error)
+          await db.collection("topics_weekly").updateMany(topicQuery, {
+            $set: {
+              status: "completed",
+            },
+          })
+        }
+      } else {
+        // No topic_id provided, update all topics for that platform
+        await db.collection("topics_weekly").updateMany(topicQuery, {
+          $set: {
+            status: "completed",
+          },
+        })
+      }
     }
 
     return Response.json({

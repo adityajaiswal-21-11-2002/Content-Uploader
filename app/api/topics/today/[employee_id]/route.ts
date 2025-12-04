@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db"
-import { formatDateISO } from "@/lib/helpers"
+import { formatDateISO, getWeekStartDate } from "@/lib/helpers"
 
 /**
  * GET /api/topics/today/:employee_id
@@ -19,12 +19,13 @@ export async function GET(
 
     const db = await connectToDatabase()
     const today = formatDateISO(new Date())
+    const weekStart = getWeekStartDate(new Date())
+    const weekStartStr = formatDateISO(weekStart)
 
-    console.log(`[Topics API] Fetching topics for employee ${employeeId} on date ${today}`)
+    console.log(`[Topics API] Fetching topics for employee ${employeeId} on date ${today}, week starting ${weekStartStr}`)
 
-    // Get today's topics for this employee
-    // Be tolerant to employee_id stored as number OR string in MongoDB
-    const query = {
+    // Get today's YouTube topics for this employee
+    const youtubeQuery = {
       $and: [
         {
           $or: [
@@ -33,24 +34,42 @@ export async function GET(
           ],
         },
         { date: today },
+        { platform: "youtube" },
       ],
     }
 
-    console.log(`[Topics API] Query:`, JSON.stringify(query))
+    console.log(`[Topics API] YouTube Query:`, JSON.stringify(youtubeQuery))
 
-    const topics = await db
+    const youtubeTopic = await db
       .collection("topics_daily")
-      .find(query)
+      .findOne(youtubeQuery)
+
+    // Get this week's Instagram topics for this employee
+    const instagramQuery = {
+      $and: [
+        {
+          $or: [
+            { employee_id: employeeId },
+            { employee_id: resolvedParams.employee_id },
+          ],
+        },
+        { week_start: weekStartStr },
+        { platform: "instagram" },
+      ],
+    }
+
+    console.log(`[Topics API] Instagram Query:`, JSON.stringify(instagramQuery))
+
+    const instaTopics = await db
+      .collection("topics_weekly")
+      .find(instagramQuery)
       .toArray()
 
-    console.log(`[Topics API] Found ${topics.length} topics for employee ${employeeId}`)
-
-    // Separate YouTube and Instagram topics
-    const youtubeTopic = topics.find((t) => t.platform === "youtube")
-    const instaTopics = topics.filter((t) => t.platform === "instagram")
+    console.log(`[Topics API] Found YouTube: ${youtubeTopic ? 1 : 0}, Instagram: ${instaTopics.length} topics for employee ${employeeId}`)
 
     const response = {
       date: today,
+      week_start: weekStartStr,
       youtube: youtubeTopic
         ? {
             id: youtubeTopic._id?.toString(),
