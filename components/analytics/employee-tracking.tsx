@@ -115,9 +115,9 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
   const dailyChartData = dailyData?.data?.map((item: any) => ({
     date: item.date,
     dateLabel: new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-    youtube: item.employee_youtube || 0,
-    instagram: item.employee_instagram || 0,
-    total: (item.employee_youtube || 0) + (item.employee_instagram || 0),
+    youtube: (item.employee_youtube || 0) + (item.employee_youtube_extra || 0),
+    instagram: (item.employee_instagram || 0) + (item.employee_instagram_extra || 0),
+    total: (item.employee_youtube || 0) + (item.employee_instagram || 0) + (item.employee_youtube_extra || 0) + (item.employee_instagram_extra || 0),
   })) || []
 
   // Prepare weekly chart data
@@ -127,20 +127,20 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
     return [{
       week: week.weekLabel,
       weekStart: week.weekStart,
-      youtube: empData.youtube_uploads,
-      instagram: empData.instagram_uploads,
+      youtube: (empData.youtube_uploads || 0) + (empData.youtube_extra || 0),
+      instagram: (empData.instagram_uploads || 0) + (empData.instagram_extra || 0),
       total: empData.total_uploads,
     }]
   }) || []
 
   // Prepare monthly chart data
   const monthlyChartData = monthlyData?.map((item: any) => ({
-    month: item.month || item.total_youtube || "Unknown",
+    month: item.month || item.youtube_uploads || "Unknown",
     monthLabel: item.month
       ? new Date(item.month + "-01").toLocaleDateString("en-US", { month: "short", year: "numeric" })
       : "Unknown",
-    youtube: item.total_youtube || 0,
-    instagram: item.total_instagram || 0,
+    youtube: item.youtube_uploads || 0,
+    instagram: item.instagram_uploads || 0,
     total: item.total_uploads || 0,
   })) || []
 
@@ -175,6 +175,67 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {selectedEmployee && dailyData && (
+        <>
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total YouTube</p>
+                    <p className="text-2xl font-bold">{dailyData.summary?.total_youtube_uploads || 0}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Extras: +{dailyData.summary?.extra_youtube_uploads || 0}
+                    </p>
+                  </div>
+                  <Youtube className="w-8 h-8 text-red-500" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Instagram</p>
+                    <p className="text-2xl font-bold">{dailyData.summary?.total_instagram_uploads || 0}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Extras: +{dailyData.summary?.extra_instagram_uploads || 0}
+                    </p>
+                  </div>
+                  <Instagram className="w-8 h-8 text-pink-500" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Uploads</p>
+                    <p className="text-2xl font-bold">{dailyData.summary?.total_uploads || 0}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Extras overall: +
+                      {(dailyData.summary?.extra_youtube_uploads || 0) + (dailyData.summary?.extra_instagram_uploads || 0)}
+                    </p>
+                  </div>
+                  <TrendingUp className="w-8 h-8 text-blue-500" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Period</p>
+                    <p className="text-lg font-bold">{dailyData.summary?.total_days || 0} days</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
       )}
 
       {selectedEmployee && (

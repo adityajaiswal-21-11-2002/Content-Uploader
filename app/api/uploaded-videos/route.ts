@@ -113,7 +113,34 @@ export async function GET(request: Request) {
       // YouTube videos
       if (upload.youtube_done && upload.youtube_video_link) {
         if (!platformParam || platformParam === "youtube") {
-          const topicKey = `${upload.employee_id}-${upload.date}-youtube`
+          let topicName = "No topic assigned"
+
+          // If topic_id is stored with the upload, use it to find the specific topic
+          if (upload.topic_id) {
+            try {
+              // Try to find the specific topic by ID
+              const dailyTopic = dailyTopics.find(t =>
+                t._id?.toString() === upload.topic_id ||
+                t._id === upload.topic_id
+              )
+              if (dailyTopic) {
+                topicName = dailyTopic.topic
+              } else {
+                // Fallback to topic map if specific topic not found
+                const topicKey = `${upload.employee_id}-${upload.date}-youtube`
+                topicName = topicMap.get(topicKey) || "No topic assigned"
+              }
+            } catch (error) {
+              // Fallback if topic_id is invalid
+              const topicKey = `${upload.employee_id}-${upload.date}-youtube`
+              topicName = topicMap.get(topicKey) || "No topic assigned"
+            }
+          } else {
+            // No topic_id stored, use the old logic
+            const topicKey = `${upload.employee_id}-${upload.date}-youtube`
+            topicName = topicMap.get(topicKey) || "No topic assigned"
+          }
+
           videos.push({
             id: `${upload.employee_id}-${upload.date}-youtube`,
             employee_id: upload.employee_id,
@@ -122,7 +149,7 @@ export async function GET(request: Request) {
             platform: "youtube",
             date: upload.date,
             video_link: upload.youtube_video_link,
-            topic: topicMap.get(topicKey) || "No topic assigned",
+            topic: topicName,
             created_at: upload.created_at || upload.updated_at,
           })
         }
@@ -131,7 +158,34 @@ export async function GET(request: Request) {
       // Instagram videos
       if (upload.insta_done && upload.instagram_video_link) {
         if (!platformParam || platformParam === "instagram") {
-          const topicKey = `${upload.employee_id}-${upload.date}-instagram`
+          let topicName = "No topic assigned"
+
+          // If topic_id is stored with the upload, use it to find the specific topic
+          if (upload.topic_id) {
+            try {
+              // Try to find the specific topic by ID
+              const weeklyTopic = weeklyTopics.find(t =>
+                t._id?.toString() === upload.topic_id ||
+                t._id === upload.topic_id
+              )
+              if (weeklyTopic) {
+                topicName = weeklyTopic.topic
+              } else {
+                // Fallback to topic map if specific topic not found
+                const topicKey = `${upload.employee_id}-${upload.date}-instagram`
+                topicName = topicMap.get(topicKey) || "No topic assigned"
+              }
+            } catch (error) {
+              // Fallback if topic_id is invalid
+              const topicKey = `${upload.employee_id}-${upload.date}-instagram`
+              topicName = topicMap.get(topicKey) || "No topic assigned"
+            }
+          } else {
+            // No topic_id stored, use the old logic
+            const topicKey = `${upload.employee_id}-${upload.date}-instagram`
+            topicName = topicMap.get(topicKey) || "No topic assigned"
+          }
+
           videos.push({
             id: `${upload.employee_id}-${upload.date}-instagram`,
             employee_id: upload.employee_id,
@@ -140,7 +194,7 @@ export async function GET(request: Request) {
             platform: "instagram",
             date: upload.date,
             video_link: upload.instagram_video_link,
-            topic: topicMap.get(topicKey) || "No topic assigned",
+            topic: topicName,
             created_at: upload.created_at || upload.updated_at,
           })
         }

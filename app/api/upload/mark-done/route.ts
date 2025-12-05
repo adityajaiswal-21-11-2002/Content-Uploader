@@ -51,6 +51,7 @@ export async function POST(request: Request) {
       platform,
       date: today,
       video_link: video_link.trim(),
+      topic_id: body.topic_id || null,
       created_at: new Date(),
     }
 
@@ -76,6 +77,7 @@ export async function POST(request: Request) {
       date: today,
       [updateField]: true,
       [videoLinkField]: video_link.trim(),
+      topic_id: body.topic_id || null,
       updated_at: new Date(),
     }
 
