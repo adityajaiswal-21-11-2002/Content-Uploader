@@ -134,8 +134,10 @@ export async function GET(request: Request) {
     const requiredYouTube = weeksInMonth * 3
 
     // Add compliance status
+    const responseMonth = monthParam || `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, "0")}`
     const dataWithCompliance = chartData.map((data) => ({
       ...data,
+      month: responseMonth,
       required_instagram: requiredInstagram,
       required_youtube: requiredYouTube,
       insta_compliant: data.instagram_uploads >= requiredInstagram,

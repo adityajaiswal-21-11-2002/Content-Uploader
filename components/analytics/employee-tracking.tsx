@@ -154,7 +154,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
   // Prepare daily chart data
   const dailyChartData = dailyData?.data?.map((item: any) => ({
     date: item.date,
-    dateLabel: new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    dateLabel: item.date ? new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Unknown",
     youtube: (item.employee_youtube || 0) + (item.employee_youtube_extra || 0),
     instagram: (item.employee_instagram || 0) + (item.employee_instagram_extra || 0),
     total: (item.employee_youtube || 0) + (item.employee_instagram || 0) + (item.employee_youtube_extra || 0) + (item.employee_instagram_extra || 0),
@@ -162,20 +162,21 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
 
   // Prepare weekly chart data
   const weeklyChartData = weeklyData?.data?.flatMap((week: any) => {
+    if (!week?.employees) return []
     const empData = week.employees.find((e: any) => e.employee_id === selectedEmployee)
     if (!empData) return []
     return [{
-      week: week.weekLabel,
+      week: week.weekLabel || "Unknown Week",
       weekStart: week.weekStart,
       youtube: (empData.youtube_uploads || 0) + (empData.youtube_extra || 0),
       instagram: (empData.instagram_uploads || 0) + (empData.instagram_extra || 0),
-      total: empData.total_uploads,
+      total: empData.total_uploads || 0,
     }]
   }) || []
 
   // Prepare monthly chart data
   const monthlyChartData = monthlyData?.map((item: any) => ({
-    month: item.month || item.total_youtube || "Unknown",
+    month: item.month || "Unknown",
     monthLabel: item.month
       ? new Date(item.month + "-01").toLocaleDateString("en-US", { month: "short", year: "numeric" })
       : "Unknown",
@@ -186,8 +187,9 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
 
   const selectedEmployeeName = employees.find((e) => e.id === selectedEmployee)?.name || "Employee"
 
-  // Check if we have any data
-  if (!dailyData && !weeklyData && monthlyData.length === 0 && !loading) {
+  // Check if we have any data to display
+  const hasData = dailyData || weeklyData || (monthlyData && monthlyData.length > 0)
+  if (!hasData && !loading && !error) {
     return (
       <div className="text-center py-8 text-muted-foreground">
         <p className="text-lg font-semibold mb-2">No Data Available</p>
