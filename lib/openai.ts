@@ -97,9 +97,9 @@ ${pepperNames.map((name) => `- ${name}`).join("\n")}
 Return JSON:
 {
   "pepper_topics": [
-    { "employee": "${peeperNames[0]}", "topic": "..." },
-    { "employee": "${peeperNames[1]}", "topic": "..." },
-    { "employee": "${peeperNames[2]}", "topic": "..." }
+    { "employee": "${pepperNames[0]}", "topic": "..." },
+    { "employee": "${pepperNames[1]}", "topic": "..." },
+    { "employee": "${pepperNames[2]}", "topic": "..." }
   ]
 }
 

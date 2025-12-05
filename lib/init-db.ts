@@ -98,6 +98,15 @@ export async function initializeDatabase() {
 
   const employeesCollection = db.collection("employees")
 
+  // Update any existing "peeper" roles to "pepper" for backward compatibility
+  const peeperUpdateResult = await employeesCollection.updateMany(
+    { role: "peeper" },
+    { $set: { role: "pepper" } }
+  )
+  if (peeperUpdateResult.modifiedCount > 0) {
+    console.log(`🔄 Updated ${peeperUpdateResult.modifiedCount} existing employees from 'peeper' to 'pepper' role`)
+  }
+
   // Insert employees
   for (const employee of employees) {
     await employeesCollection.updateOne(
@@ -111,6 +120,7 @@ export async function initializeDatabase() {
       { upsert: true }
     )
   }
+  console.log("✅ Employees initialized/updated")
 
   // Create indexes
   await employeesCollection.createIndex({ id: 1 }, { unique: true })

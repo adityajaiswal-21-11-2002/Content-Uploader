@@ -51,7 +51,7 @@ export default function InitPage() {
               </p>
               <ul className="text-sm text-muted-foreground space-y-1 mb-4">
                 <li>• 3 Coders (Aditya, Vipin, Vikash)</li>
-                <li>• 3 Peepers (Rohit, Pawan, Annu)</li>
+                <li>• 3 Peppers (Rohit, Pawan, Annu)</li>
               </ul>
               <Button
                 onClick={handleInit}

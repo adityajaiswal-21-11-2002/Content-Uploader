@@ -270,7 +270,7 @@ export default function EmployeeDashboardPage() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">{employee.name}</h1>
           <p className="text-muted-foreground">
-            {employee.role === "coder" ? "Coder" : "Peeper"} - {quota.youtube} YouTube videos/week, {quota.insta} Instagram posts/week
+            {employee.role === "coder" ? "Coder" : "Pepper"} - {quota.youtube} YouTube videos/week, {quota.insta} Instagram posts/week
           </p>
         </div>
 

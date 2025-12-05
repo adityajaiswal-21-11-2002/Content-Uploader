@@ -78,7 +78,7 @@ export default function EmployeeCard({ employee, complianceSummary }: EmployeeCa
                 {employee.name}
               </CardTitle>
               <CardDescription className="fluid-text-sm text-muted-foreground">
-                {employee.role === "coder" ? "Coder" : "Peeper"} • {employee.email}
+                {employee.role === "coder" ? "Coder" : "Pepper"} • {employee.email}
               </CardDescription>
             </div>
             {todayCompliant ? (
