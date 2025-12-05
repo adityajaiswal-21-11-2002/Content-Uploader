@@ -48,9 +48,26 @@ export async function GET(request: Request) {
           })
           .toArray()
 
-        // Count total uploads
-        const totalYoutube = dailyUploads.filter((u) => u.youtube_done).length
-        const totalInstagram = dailyUploads.filter((u) => u.insta_done).length
+        // Get all extra uploads for this month
+        const extraUploads = await db
+          .collection("extra_uploads")
+          .find({
+            employee_id: emp.id,
+            date: { $gte: startDateStr, $lte: endDateStr },
+          })
+          .toArray()
+
+        // Count mandatory uploads
+        const mandatoryYoutube = dailyUploads.filter((u) => u.youtube_done).length
+        const mandatoryInstagram = dailyUploads.filter((u) => u.insta_done).length
+
+        // Count extra uploads
+        const extraYoutube = extraUploads.filter((u) => u.platform === "youtube").length
+        const extraInstagram = extraUploads.filter((u) => u.platform === "instagram").length
+
+        // Count total uploads (mandatory + extra)
+        const totalYoutube = mandatoryYoutube + extraYoutube
+        const totalInstagram = mandatoryInstagram + extraInstagram
         const totalUploads = totalYoutube + totalInstagram
 
         // Count days with both platforms uploaded
@@ -77,14 +94,18 @@ export async function GET(request: Request) {
           total_youtube: totalYoutube,
           total_instagram: totalInstagram,
           total_uploads: totalUploads,
+          youtube_mandatory: mandatoryYoutube,
+          instagram_mandatory: mandatoryInstagram,
+          youtube_extra: extraYoutube,
+          instagram_extra: extraInstagram,
           days_with_both: daysWithBoth,
           required_instagram: requiredInstagram,
           required_youtube: requiredYouTube,
-          insta_compliant: instaCompliant,
-          youtube_compliant: youtubeCompliant,
-          fully_compliant: fullyCompliant,
-          insta_extra: Math.max(0, totalInstagram - requiredInstagram),
-          youtube_extra: Math.max(0, totalYoutube - requiredYouTube),
+          insta_compliant: mandatoryInstagram >= requiredInstagram,
+          youtube_compliant: mandatoryYoutube >= requiredYouTube,
+          fully_compliant: mandatoryInstagram >= requiredInstagram && mandatoryYoutube >= requiredYouTube,
+          insta_extra_count: extraInstagram,
+          youtube_extra_count: extraYoutube,
         }
       }),
     )

@@ -15,14 +15,18 @@ interface MonthlyStat {
   total_youtube: number
   total_instagram: number
   total_uploads: number
+  youtube_mandatory?: number
+  instagram_mandatory?: number
+  youtube_extra: number
+  instagram_extra: number
   days_with_both: number
   required_instagram: number
   required_youtube: number
   insta_compliant: boolean
   youtube_compliant: boolean
   fully_compliant: boolean
-  insta_extra: number
-  youtube_extra: number
+  insta_extra_count?: number
+  youtube_extra_count?: number
 }
 
 interface MonthlyLeaderboardProps {
@@ -155,13 +159,15 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
                           <Youtube className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1">
-                            <span className="fluid-text-sm font-bold text-red-700 dark:text-red-300">{stat.total_youtube}</span>
-                            <span className="fluid-text-xs text-muted-foreground">YT</span>
+                          <div className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-1">
+                              <span className="fluid-text-sm font-bold text-red-700 dark:text-red-300">{stat.total_youtube}</span>
+                              <span className="fluid-text-xs text-muted-foreground">YT</span>
+                            </div>
                             {stat.youtube_extra > 0 && (
-                              <span className="fluid-text-xs text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded-full">
-                                +{stat.youtube_extra}
-                              </span>
+                              <div className="fluid-text-xs text-green-600 dark:text-green-400 font-medium">
+                                +{stat.youtube_extra} extra
+                              </div>
                             )}
                           </div>
                         </div>
@@ -172,13 +178,15 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
                           <Instagram className="w-3.5 h-3.5 text-pink-600 dark:text-pink-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1">
-                            <span className="fluid-text-sm font-bold text-pink-700 dark:text-pink-300">{stat.total_instagram}</span>
-                            <span className="fluid-text-xs text-muted-foreground">IG</span>
+                          <div className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-1">
+                              <span className="fluid-text-sm font-bold text-pink-700 dark:text-pink-300">{stat.total_instagram}</span>
+                              <span className="fluid-text-xs text-muted-foreground">IG</span>
+                            </div>
                             {stat.insta_extra > 0 && (
-                              <span className="fluid-text-xs text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded-full">
-                                +{stat.insta_extra}
-                              </span>
+                              <div className="fluid-text-xs text-green-600 dark:text-green-400 font-medium">
+                                +{stat.insta_extra} extra
+                              </div>
                             )}
                           </div>
                         </div>
@@ -223,6 +231,43 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
             </div>
           ))}
         </div>
+
+        {/* Extra Uploads Summary */}
+        {(() => {
+          const totalYoutubeExtras = stats.reduce((sum, stat) => sum + stat.youtube_extra, 0)
+          const totalInstagramExtras = stats.reduce((sum, stat) => sum + stat.insta_extra, 0)
+          const totalExtras = totalYoutubeExtras + totalInstagramExtras
+
+          if (totalExtras > 0) {
+            return (
+              <div className="mt-6 p-4 bg-gradient-to-r from-green-50 via-green-100/50 to-emerald-50 dark:from-green-950/50 dark:via-green-900/30 dark:to-emerald-950/50 rounded-xl border border-green-200/50 dark:border-green-800/50">
+                <p className="fluid-text-sm font-semibold mb-3 text-green-900 dark:text-green-100">🌟 Extra Uploads Summary:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex items-center gap-2">
+                    <Youtube className="w-4 h-4 text-red-500" />
+                    <span className="fluid-text-sm text-green-800 dark:text-green-200">
+                      <strong>{totalYoutubeExtras}</strong> extra YouTube videos
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Instagram className="w-4 h-4 text-pink-500" />
+                    <span className="fluid-text-sm text-green-800 dark:text-green-200">
+                      <strong>{totalInstagramExtras}</strong> extra Instagram posts
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-green-600" />
+                    <span className="fluid-text-sm text-green-800 dark:text-green-200">
+                      <strong>{totalExtras}</strong> total extra uploads
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )
+          }
+          return null
+        })()}
+
         <div className="mt-6 p-4 bg-gradient-to-r from-muted/30 via-muted/50 to-muted/30 dark:from-muted/50 dark:via-muted/70 dark:to-muted/50 rounded-xl border border-border/50">
           <p className="fluid-text-sm font-semibold mb-3 text-foreground/90">📋 Requirements:</p>
           <ul className="space-y-2 fluid-text-xs text-muted-foreground">
