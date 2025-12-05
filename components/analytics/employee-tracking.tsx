@@ -152,40 +152,71 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
   }
 
   // Prepare daily chart data
-  const dailyChartData = dailyData?.data?.map((item: any) => ({
-    date: item.date,
-    dateLabel: item.date ? new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Unknown",
-    youtube: (item.employee_youtube || 0) + (item.employee_youtube_extra || 0),
-    instagram: (item.employee_instagram || 0) + (item.employee_instagram_extra || 0),
-    total: (item.employee_youtube || 0) + (item.employee_instagram || 0) + (item.employee_youtube_extra || 0) + (item.employee_instagram_extra || 0),
-  })) || []
+  const dailyChartData = dailyData?.data?.map((item: any) => {
+    try {
+      return {
+        date: item.date,
+        dateLabel: item.date ? new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Unknown",
+        youtube: (item.employee_youtube || 0) + (item.employee_youtube_extra || 0),
+        instagram: (item.employee_instagram || 0) + (item.employee_instagram_extra || 0),
+        total: (item.employee_youtube || 0) + (item.employee_instagram || 0) + (item.employee_youtube_extra || 0) + (item.employee_instagram_extra || 0),
+      }
+    } catch (error) {
+      console.error("Error processing daily chart data item:", item, error)
+      return {
+        date: item?.date || "Unknown",
+        dateLabel: "Error",
+        youtube: 0,
+        instagram: 0,
+        total: 0,
+      }
+    }
+  }).filter(item => item !== null) || []
 
   // Prepare weekly chart data
   const weeklyChartData = weeklyData?.data?.flatMap((week: any) => {
-    if (!week?.employees) return []
-    const empData = week.employees.find((e: any) => e.employee_id === selectedEmployee)
-    if (!empData) return []
-    return [{
-      week: week.weekLabel || "Unknown Week",
-      weekStart: week.weekStart,
-      youtube: (empData.youtube_uploads || 0) + (empData.youtube_extra || 0),
-      instagram: (empData.instagram_uploads || 0) + (empData.instagram_extra || 0),
-      total: empData.total_uploads || 0,
-    }]
-  }) || []
+    try {
+      if (!week?.employees) return []
+      const empData = week.employees.find((e: any) => e.employee_id === selectedEmployee)
+      if (!empData) return []
+      return [{
+        week: week.weekLabel || "Unknown Week",
+        weekStart: week.weekStart,
+        youtube: (empData.youtube_uploads || 0) + (empData.youtube_extra || 0),
+        instagram: (empData.instagram_uploads || 0) + (empData.instagram_extra || 0),
+        total: empData.total_uploads || 0,
+      }]
+    } catch (error) {
+      console.error("Error processing weekly chart data for week:", week, error)
+      return []
+    }
+  }).filter(item => item !== null) || []
 
   // Prepare monthly chart data
-  const monthlyChartData = monthlyData?.map((item: any) => ({
-    month: item.month || "Unknown",
-    monthLabel: item.month
-      ? new Date(item.month + "-01").toLocaleDateString("en-US", { month: "short", year: "numeric" })
-      : "Unknown",
-    youtube: item.total_youtube || 0,
-    instagram: item.total_instagram || 0,
-    total: item.total_uploads || 0,
-  })) || []
+  const monthlyChartData = monthlyData?.map((item: any) => {
+    try {
+      return {
+        month: item.month || "Unknown",
+        monthLabel: item.month
+          ? new Date(item.month + "-01").toLocaleDateString("en-US", { month: "short", year: "numeric" })
+          : "Unknown",
+        youtube: item.total_youtube || 0,
+        instagram: item.total_instagram || 0,
+        total: item.total_uploads || 0,
+      }
+    } catch (error) {
+      console.error("Error processing monthly chart data item:", item, error)
+      return {
+        month: "Error",
+        monthLabel: "Error",
+        youtube: 0,
+        instagram: 0,
+        total: 0,
+      }
+    }
+  }).filter(item => item !== null) || []
 
-  const selectedEmployeeName = employees.find((e) => e.id === selectedEmployee)?.name || "Employee"
+  const selectedEmployeeName = employees?.find((e) => e.id === selectedEmployee)?.name || "Employee"
 
   // Check if we have any data to display
   const hasData = dailyData || weeklyData || (monthlyData && monthlyData.length > 0)
@@ -238,7 +269,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
         </Card>
       )}
 
-      {selectedEmployee && dailyData && (
+      {selectedEmployee && dailyData && dailyData.data && (
         <>
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -247,9 +278,9 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">Total YouTube</p>
-                    <p className="text-2xl font-bold">{dailyData.summary?.total_youtube_uploads || 0}</p>
+                    <p className="text-2xl font-bold">{dailyData?.summary?.total_youtube_uploads || 0}</p>
                     <p className="text-xs text-muted-foreground">
-                      Extras: +{dailyData.summary?.extra_youtube_uploads || 0}
+                      Extras: +{dailyData?.summary?.extra_youtube_uploads || 0}
                     </p>
                   </div>
                   <Youtube className="w-8 h-8 text-red-500" />
@@ -261,9 +292,9 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">Total Instagram</p>
-                    <p className="text-2xl font-bold">{dailyData.summary?.total_instagram_uploads || 0}</p>
+                    <p className="text-2xl font-bold">{dailyData?.summary?.total_instagram_uploads || 0}</p>
                     <p className="text-xs text-muted-foreground">
-                      Extras: +{dailyData.summary?.extra_instagram_uploads || 0}
+                      Extras: +{dailyData?.summary?.extra_instagram_uploads || 0}
                     </p>
                   </div>
                   <Instagram className="w-8 h-8 text-pink-500" />
@@ -275,10 +306,10 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">Total Uploads</p>
-                    <p className="text-2xl font-bold">{dailyData.summary?.total_uploads || 0}</p>
+                    <p className="text-2xl font-bold">{dailyData?.summary?.total_uploads || 0}</p>
                     <p className="text-xs text-muted-foreground">
                       Extras overall: +
-                      {(dailyData.summary?.extra_youtube_uploads || 0) + (dailyData.summary?.extra_instagram_uploads || 0)}
+                      {(dailyData?.summary?.extra_youtube_uploads || 0) + (dailyData?.summary?.extra_instagram_uploads || 0)}
                     </p>
                   </div>
                   <TrendingUp className="w-8 h-8 text-blue-500" />
