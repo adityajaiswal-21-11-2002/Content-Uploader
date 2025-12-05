@@ -240,20 +240,17 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
     )
   }
 
-  // Temporary simplified render for debugging
-  if (true) { // Force simplified view
-    return (
-      <div className="p-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">Employee Tracking</h2>
-        <p className="text-muted-foreground mb-4">Component is loading...</p>
-        <div className="text-sm text-gray-500">
-          <p>Employee ID: {employeeId || 'None'}</p>
-          <p>Loading: {loading ? 'Yes' : 'No'}</p>
-          <p>Error: {error || 'None'}</p>
-        </div>
-      </div>
-    )
-  }
+  // Debug info - remove after testing
+  console.log("EmployeeTracking render state:", {
+    employeeId,
+    selectedEmployee,
+    loading,
+    error,
+    hasDailyData: !!dailyData,
+    hasWeeklyData: !!weeklyData,
+    monthlyDataLength: monthlyData?.length || 0,
+    employeesCount: employees?.length || 0
+  })
 
   try {
     return (
