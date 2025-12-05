@@ -20,6 +20,7 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
   const [weeklyData, setWeeklyData] = useState<any>(null)
   const [monthlyData, setMonthlyData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [selectedDays, setSelectedDays] = useState(30)
   const [selectedWeeks, setSelectedWeeks] = useState(8)
   const [selectedMonths, setSelectedMonths] = useState(6)
@@ -51,14 +52,18 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
 
   const fetchData = async () => {
     if (!selectedEmployee) return
-    
+
     setLoading(true)
+    setError(null)
     try {
       // Fetch daily data
       const dailyResponse = await fetch(`/api/analytics/daily?days=${selectedDays}&employeeId=${selectedEmployee}`)
       if (dailyResponse.ok) {
         const daily = await dailyResponse.json()
         setDailyData(daily)
+        console.log("Daily data loaded:", daily)
+      } else {
+        console.error("Failed to fetch daily data:", dailyResponse.status, dailyResponse.statusText)
       }
 
       // Fetch weekly data
@@ -66,6 +71,9 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
       if (weeklyResponse.ok) {
         const weekly = await weeklyResponse.json()
         setWeeklyData(weekly)
+        console.log("Weekly data loaded:", weekly)
+      } else {
+        console.error("Failed to fetch weekly data:", weeklyResponse.status, weeklyResponse.statusText)
       }
 
       // Fetch monthly data for multiple months
@@ -75,18 +83,35 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
         const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
         const monthStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
         monthlyPromises.push(
-          fetch(`/api/analytics/monthly?employeeId=${selectedEmployee}&month=${monthStr}`).then((r) => r.json())
+          fetch(`/api/analytics/monthly?employeeId=${selectedEmployee}&month=${monthStr}`)
+            .then(async (r) => {
+              if (r.ok) {
+                const data = await r.json()
+                console.log(`Monthly data for ${monthStr}:`, data)
+                return data
+              } else {
+                console.error(`Failed to fetch monthly data for ${monthStr}:`, r.status, r.statusText)
+                return null
+              }
+            })
+            .catch((error) => {
+              console.error(`Error fetching monthly data for ${monthStr}:`, error)
+              return null
+            })
         )
       }
-      
+
       const monthlyResults = await Promise.all(monthlyPromises)
       const monthlyDataArray = monthlyResults
+        .filter((result) => result && result.data)
         .map((result) => result.data?.[0] || null)
         .filter((item) => item !== null)
         .reverse() // Show oldest to newest
       setMonthlyData(monthlyDataArray)
+      console.log("Monthly data array:", monthlyDataArray)
     } catch (error) {
       console.error("Error fetching tracking data:", error)
+      setError("Failed to load tracking data. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -109,6 +134,21 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
 
   if (loading && !dailyData) {
     return <LoadingLottie message="Loading employee tracking..." />
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8 text-destructive">
+        <p className="text-lg font-semibold mb-2">Error Loading Employee Tracking</p>
+        <p>{error}</p>
+        <button
+          onClick={() => selectedEmployee && fetchData()}
+          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+        >
+          Try Again
+        </button>
+      </div>
+    )
   }
 
   // Prepare daily chart data
@@ -135,16 +175,35 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
 
   // Prepare monthly chart data
   const monthlyChartData = monthlyData?.map((item: any) => ({
-    month: item.month || item.youtube_uploads || "Unknown",
+    month: item.month || item.total_youtube || "Unknown",
     monthLabel: item.month
       ? new Date(item.month + "-01").toLocaleDateString("en-US", { month: "short", year: "numeric" })
       : "Unknown",
-    youtube: item.youtube_uploads || 0,
-    instagram: item.instagram_uploads || 0,
+    youtube: item.total_youtube || 0,
+    instagram: item.total_instagram || 0,
     total: item.total_uploads || 0,
   })) || []
 
   const selectedEmployeeName = employees.find((e) => e.id === selectedEmployee)?.name || "Employee"
+
+  // Check if we have any data
+  if (!dailyData && !weeklyData && monthlyData.length === 0 && !loading) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        <p className="text-lg font-semibold mb-2">No Data Available</p>
+        <p>Unable to load employee tracking data. Please check your connection and try again.</p>
+        <button
+          onClick={() => {
+            if (selectedEmployee) fetchData()
+            else fetchEmployees()
+          }}
+          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+        >
+          Retry
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
