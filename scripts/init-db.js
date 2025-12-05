@@ -82,7 +82,7 @@ const employees = [
   {
     id: 4,
     name: "Rohit",
-    role: "peeper",
+    role: "pepper",
     email: "rohit.edit@example.com",
     weekly_required_yt: 3,
     weekly_required_insta: 7,
@@ -90,7 +90,7 @@ const employees = [
   {
     id: 5,
     name: "Pawan Sharma",
-    role: "peeper",
+    role: "pepper",
     email: "pawan.sharma@example.com",
     weekly_required_yt: 3,
     weekly_required_insta: 7,
@@ -98,7 +98,7 @@ const employees = [
   {
     id: 6,
     name: "Annu",
-    role: "peeper",
+    role: "pepper",
     email: "annu.edit@example.com",
     weekly_required_yt: 3,
     weekly_required_insta: 7,

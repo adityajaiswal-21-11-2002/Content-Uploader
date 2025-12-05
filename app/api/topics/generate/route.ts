@@ -26,18 +26,18 @@ export async function POST(request: Request) {
     const coders = employees.filter(
       (e) => e.role === "coder" && (e.weekly_required_yt ?? 3) > 0
     )
-    const peepers = employees.filter(
-      (e) => e.role === "peeper" && (e.weekly_required_yt ?? 3) > 0
+    const peppers = employees.filter(
+      (e) => e.role === "pepper" && (e.weekly_required_yt ?? 3) > 0
     )
 
     // Generate YouTube topics using OpenAI (skip if no employees for that group)
-    const [coderTopicsResponse, peeperTopicsResponse] = await Promise.all([
+    const [coderTopicsResponse, pepperTopicsResponse] = await Promise.all([
       coders.length
         ? generateCoderTopics(coders.map((e) => e.name))
         : Promise.resolve({ coder_topics: [] }),
-      peepers.length
-        ? generatePeeperTopics(peepers.map((e) => e.name))
-        : Promise.resolve({ peeper_topics: [] }),
+      peppers.length
+        ? generatePepperTopics(peppers.map((e) => e.name))
+        : Promise.resolve({ pepper_topics: [] }),
     ])
 
     const topicsCollection = db.collection("topics_daily")
@@ -57,15 +57,15 @@ export async function POST(request: Request) {
       }
     }
 
-    // Save YouTube topics for peepers
-    for (const peeperTopic of peeperTopicsResponse.peeper_topics ?? []) {
-      const employee = peepers.find((e) => e.name === peeperTopic.employee)
+    // Save YouTube topics for peppers
+    for (const pepperTopic of pepperTopicsResponse.pepper_topics ?? []) {
+      const employee = peppers.find((e) => e.name === pepperTopic.employee)
       if (employee) {
         await topicsCollection.insertOne({
           date: today,
           employee_id: employee.id,
           platform: "youtube",
-          topic: peeperTopic.topic,
+          topic: pepperTopic.topic,
           status: "pending",
           created_at: new Date(),
         })
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       success: true,
       message: `Generated YouTube topics for ${today}`,
       coder_topics: coderTopicsResponse.coder_topics?.length ?? 0,
-      peeper_topics: peeperTopicsResponse.peeper_topics?.length ?? 0,
+      pepper_topics: pepperTopicsResponse.pepper_topics?.length ?? 0,
     })
   } catch (error) {
     console.error("Error generating topics:", error)

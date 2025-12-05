@@ -55,7 +55,7 @@ export default function TopicPanel({ employees }: TopicPanelProps) {
       }
 
       const result = await response.json()
-      toast.success(`Generated topics successfully! (${result.coder_topics} coder, ${result.peeper_topics} peeper, ${result.insta_topics} Instagram)`)
+      toast.success(`Generated topics successfully! (${result.coder_topics} coder, ${result.pepper_topics} pepper, ${result.insta_topics} Instagram)`)
     } catch (error: any) {
       console.error("Error generating topics:", error)
       toast.error(error.message || "Failed to generate topics. Make sure OPENAI_API_KEY is set.")

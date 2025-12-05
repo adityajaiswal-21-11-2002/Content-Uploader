@@ -1,7 +1,7 @@
 export interface Employee {
   id: number
   name: string
-  role: "coder" | "peeper"
+  role: "coder" | "pepper"
   email: string
   weekly_required_yt: number
   weekly_required_insta: number

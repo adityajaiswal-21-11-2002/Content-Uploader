@@ -125,7 +125,7 @@ async function generateTopics() {
     log('\n📊 Summary:', 'cyan')
     log(`   📝 Date: ${new Date().toISOString().split('T')[0]}`, 'blue')
     log(`   👨‍💻 Coder topics: ${result.data.coder_topics || 0}`, 'blue')
-    log(`   🎨 Peeper topics: ${result.data.peeper_topics || 0}`, 'blue')
+    log(`   🎨 Pepper topics: ${result.data.pepper_topics || 0}`, 'blue')
     log(`   📸 Instagram topics: ${result.data.insta_topics || 0}`, 'blue')
     log('\n✅ All employees now have topics for today!', 'green')
     log('   Employees can view them on their dashboards.', 'blue')

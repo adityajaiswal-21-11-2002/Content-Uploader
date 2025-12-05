@@ -12,7 +12,7 @@ export function formatDateISO(date: Date): string {
 }
 
 export function getRequiredQuota(
-  role: "coder" | "peeper",
+  role: "coder" | "pepper",
   employee?: Employee
 ): { youtube: number; insta: number } {
   // Prefer per-employee weekly requirements when available

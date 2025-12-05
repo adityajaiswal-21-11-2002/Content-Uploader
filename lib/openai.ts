@@ -12,7 +12,7 @@ export interface CoderTopicsResponse {
 }
 
 export interface PeeperTopicsResponse {
-  peeper_topics: Array<{
+  pepper_topics: Array<{
     employee: string
     topic: string
   }>
@@ -71,10 +71,10 @@ Make each topic unique, specific, and actionable.
 }
 
 /**
- * Generate unique YouTube topics for peepers (editing, VFX, Photoshop, 3D)
+ * Generate unique YouTube topics for peppers (editing, VFX, Photoshop, 3D)
  */
-export async function generatePeeperTopics(
-  peeperNames: string[]
+export async function generatePepperTopics(
+  pepperNames: string[]
 ): Promise<PeeperTopicsResponse> {
   try {
     const completion = await openai.chat.completions.create({
@@ -92,11 +92,11 @@ Generate unique, trending YouTube topics related to:
 Each topic should be engaging and suitable for creators in these fields.
 
 Employees:
-${peeperNames.map((name) => `- ${name}`).join("\n")}
+${pepperNames.map((name) => `- ${name}`).join("\n")}
 
 Return JSON:
 {
-  "peeper_topics": [
+  "pepper_topics": [
     { "employee": "${peeperNames[0]}", "topic": "..." },
     { "employee": "${peeperNames[1]}", "topic": "..." },
     { "employee": "${peeperNames[2]}", "topic": "..." }
@@ -118,7 +118,7 @@ Make each topic unique, specific, and actionable.
 
     return JSON.parse(content) as PeeperTopicsResponse
   } catch (error) {
-    console.error("Error generating peeper topics:", error)
+    console.error("Error generating pepper topics:", error)
     throw error
   }
 }

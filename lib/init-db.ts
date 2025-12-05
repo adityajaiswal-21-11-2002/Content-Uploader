@@ -68,11 +68,11 @@ export async function initializeDatabase() {
       weekly_required_insta: 7,
     },
 
-    // Pepper Animations Group (peepers)
+    // Pepper Animations Group (peppers)
     {
       id: 4,
       name: "Rohit Asthana",
-      role: "peeper",
+      role: "pepper",
       email: "Rohit.pepperanimation@gmail.com",
       weekly_required_yt: 3,
       weekly_required_insta: 7,
@@ -80,7 +80,7 @@ export async function initializeDatabase() {
     {
       id: 5,
       name: "Pawan Sharma",
-      role: "peeper",
+      role: "pepper",
       email: "Pawans.ps966@gmail.com",
       weekly_required_yt: 3,
       weekly_required_insta: 7,
@@ -88,7 +88,7 @@ export async function initializeDatabase() {
     {
       id: 6,
       name: "Anu",
-      role: "peeper",
+      role: "pepper",
       email: "anuwilliam93@gmail.com",
       // Special rule: Anu is only responsible for Instagram (no YouTube quota)
       weekly_required_yt: 0,
@@ -132,17 +132,17 @@ export async function initializeDatabase() {
   const coders = allEmployees.filter(
     (e) => e.role === "coder" && (e.weekly_required_yt ?? 3) > 0
   )
-  const peepers = allEmployees.filter(
-    (e) => e.role === "peeper" && (e.weekly_required_yt ?? 3) > 0
+  const peppers = allEmployees.filter(
+    (e) => e.role === "pepper" && (e.weekly_required_yt ?? 3) > 0
   )
 
-  const [coderTopicsResponse, peeperTopicsResponse, instaTopicsResponse] = await Promise.all([
+  const [coderTopicsResponse, pepperTopicsResponse, instaTopicsResponse] = await Promise.all([
     coders.length
       ? generateCoderTopics(coders.map((e) => e.name))
       : Promise.resolve({ coder_topics: [] }),
-    peepers.length
-      ? generatePeeperTopics(peepers.map((e) => e.name))
-      : Promise.resolve({ peeper_topics: [] }),
+    peppers.length
+      ? generatePepperTopics(peppers.map((e) => e.name))
+      : Promise.resolve({ pepper_topics: [] }),
     generateInstagramTopics(),
   ])
 
@@ -163,15 +163,15 @@ export async function initializeDatabase() {
     }
   }
 
-  // Save YouTube topics for peepers (editors/animation)
-  for (const peeperTopic of peeperTopicsResponse.peeper_topics ?? []) {
-    const employee = peepers.find((e) => e.name === peeperTopic.employee)
+  // Save YouTube topics for peppers (editors/animation)
+  for (const pepperTopic of pepperTopicsResponse.pepper_topics ?? []) {
+    const employee = peppers.find((e) => e.name === pepperTopic.employee)
     if (employee) {
       await topicsCollection.insertOne({
         date: today,
         employee_id: employee.id,
         platform: "youtube",
-        topic: peeperTopic.topic,
+        topic: pepperTopic.topic,
         status: "pending",
         created_at: new Date(),
       })
