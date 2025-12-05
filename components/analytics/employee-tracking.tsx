@@ -329,61 +329,77 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
               </div>
 
               {/* Daily Line Chart */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Daily Upload Activity</CardTitle>
-                  <CardDescription>Daily uploads for {selectedEmployeeName} - Instagram & YouTube</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
-                    <LineChart data={dailyChartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="dateLabel"
-                        angle={-45}
-                        textAnchor="end"
-                        height={100}
-                        tick={{ fontSize: 10 }}
-                        interval="preserveStartEnd"
-                      />
-                      <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Legend />
-                      <Line type="monotone" dataKey="youtube" stroke="#ef4444" name="YouTube" strokeWidth={2} />
-                      <Line type="monotone" dataKey="instagram" stroke="#ec4899" name="Instagram" strokeWidth={2} />
-                      <Line type="monotone" dataKey="total" stroke="#3b82f6" name="Total" strokeWidth={2} />
-                    </LineChart>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
+              {dailyChartData.length > 0 ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Daily Upload Activity</CardTitle>
+                    <CardDescription>Daily uploads for {selectedEmployeeName} - Instagram & YouTube</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
+                      <LineChart data={dailyChartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="dateLabel"
+                          angle={-45}
+                          textAnchor="end"
+                          height={100}
+                          tick={{ fontSize: 10 }}
+                          interval="preserveStartEnd"
+                        />
+                        <YAxis />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Legend />
+                        <Line type="monotone" dataKey="youtube" stroke="#ef4444" name="YouTube" strokeWidth={2} />
+                        <Line type="monotone" dataKey="instagram" stroke="#ec4899" name="Instagram" strokeWidth={2} />
+                        <Line type="monotone" dataKey="total" stroke="#3b82f6" name="Total" strokeWidth={2} />
+                      </LineChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="py-8 text-center text-muted-foreground">
+                    <p>No daily data available for the selected period.</p>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Daily Bar Chart */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Daily Upload Breakdown</CardTitle>
-                  <CardDescription>YouTube and Instagram uploads by day</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
-                    <BarChart data={dailyChartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="dateLabel"
-                        angle={-45}
-                        textAnchor="end"
-                        height={100}
-                        tick={{ fontSize: 10 }}
-                        interval="preserveStartEnd"
-                      />
-                      <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Legend />
-                      <Bar dataKey="youtube" fill="#ef4444" name="YouTube" />
-                      <Bar dataKey="instagram" fill="#ec4899" name="Instagram" />
-                    </BarChart>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
+              {dailyChartData.length > 0 ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Daily Upload Breakdown</CardTitle>
+                    <CardDescription>YouTube and Instagram uploads by day</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
+                      <BarChart data={dailyChartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="dateLabel"
+                          angle={-45}
+                          textAnchor="end"
+                          height={100}
+                          tick={{ fontSize: 10 }}
+                          interval="preserveStartEnd"
+                        />
+                        <YAxis />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Legend />
+                        <Bar dataKey="youtube" fill="#ef4444" name="YouTube" />
+                        <Bar dataKey="instagram" fill="#ec4899" name="Instagram" />
+                      </BarChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="py-8 text-center text-muted-foreground">
+                    <p>No daily breakdown data available.</p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </TabsContent>
 
@@ -408,60 +424,76 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
               </div>
 
               {/* Weekly Bar Chart */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Weekly Upload Activity</CardTitle>
-                  <CardDescription>Weekly uploads for {selectedEmployeeName} - Instagram & YouTube</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
-                    <BarChart data={weeklyChartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="week"
-                        angle={-45}
-                        textAnchor="end"
-                        height={100}
-                        tick={{ fontSize: 10 }}
-                      />
-                      <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Legend />
-                      <Bar dataKey="youtube" fill="#ef4444" name="YouTube" />
-                      <Bar dataKey="instagram" fill="#ec4899" name="Instagram" />
-                      <Bar dataKey="total" fill="#3b82f6" name="Total" />
-                    </BarChart>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
+              {weeklyChartData.length > 0 ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Weekly Upload Activity</CardTitle>
+                    <CardDescription>Weekly uploads for {selectedEmployeeName} - Instagram & YouTube</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
+                      <BarChart data={weeklyChartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="week"
+                          angle={-45}
+                          textAnchor="end"
+                          height={100}
+                          tick={{ fontSize: 10 }}
+                        />
+                        <YAxis />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Legend />
+                        <Bar dataKey="youtube" fill="#ef4444" name="YouTube" />
+                        <Bar dataKey="instagram" fill="#ec4899" name="Instagram" />
+                        <Bar dataKey="total" fill="#3b82f6" name="Total" />
+                      </BarChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="py-8 text-center text-muted-foreground">
+                    <p>No weekly data available for the selected period.</p>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Weekly Line Chart */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Weekly Upload Trends</CardTitle>
-                  <CardDescription>Trend over time</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
-                    <LineChart data={weeklyChartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="week"
-                        angle={-45}
-                        textAnchor="end"
-                        height={100}
-                        tick={{ fontSize: 10 }}
-                      />
-                      <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Legend />
-                      <Line type="monotone" dataKey="youtube" stroke="#ef4444" name="YouTube" strokeWidth={2} />
-                      <Line type="monotone" dataKey="instagram" stroke="#ec4899" name="Instagram" strokeWidth={2} />
-                      <Line type="monotone" dataKey="total" stroke="#3b82f6" name="Total" strokeWidth={2} />
-                    </LineChart>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
+              {weeklyChartData.length > 0 ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Weekly Upload Trends</CardTitle>
+                    <CardDescription>Trend over time</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={chartConfig} className="h-[260px] sm:h-[360px] lg:h-[420px]">
+                      <LineChart data={weeklyChartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="week"
+                          angle={-45}
+                          textAnchor="end"
+                          height={100}
+                          tick={{ fontSize: 10 }}
+                        />
+                        <YAxis />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Legend />
+                        <Line type="monotone" dataKey="youtube" stroke="#ef4444" name="YouTube" strokeWidth={2} />
+                        <Line type="monotone" dataKey="instagram" stroke="#ec4899" name="Instagram" strokeWidth={2} />
+                        <Line type="monotone" dataKey="total" stroke="#3b82f6" name="Total" strokeWidth={2} />
+                      </LineChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="py-8 text-center text-muted-foreground">
+                    <p>No weekly trend data available.</p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </TabsContent>
 

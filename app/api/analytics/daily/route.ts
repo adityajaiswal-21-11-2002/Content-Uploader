@@ -180,20 +180,23 @@ export async function GET(request: Request) {
       })
     }
 
+    const responseData = employeeData || chartData
+    const summaryData = employeeData || chartData
+
     return Response.json({
       startDate: startDateStr,
       endDate: endDateStr,
       employeeId: employeeIdParam ? Number.parseInt(employeeIdParam) : null,
-      data: employeeData || chartData,
+      data: responseData,
       summary: {
-        total_days: chartData.length,
-        total_youtube_uploads: chartData.reduce((sum, d) => sum + d.youtube, 0),
-        total_instagram_uploads: chartData.reduce((sum, d) => sum + d.instagram, 0),
-        total_uploads: chartData.reduce((sum, d) => sum + d.total, 0),
-        extra_youtube_uploads: chartData.reduce((sum, d) => sum + (d.youtube_extra || 0), 0),
-        extra_instagram_uploads: chartData.reduce((sum, d) => sum + (d.instagram_extra || 0), 0),
-        avg_youtube_per_day: chartData.length > 0 ? chartData.reduce((sum, d) => sum + d.youtube, 0) / chartData.length : 0,
-        avg_instagram_per_day: chartData.length > 0 ? chartData.reduce((sum, d) => sum + d.instagram, 0) / chartData.length : 0,
+        total_days: summaryData.length,
+        total_youtube_uploads: summaryData.reduce((sum, d) => sum + d.youtube, 0),
+        total_instagram_uploads: summaryData.reduce((sum, d) => sum + d.instagram, 0),
+        total_uploads: summaryData.reduce((sum, d) => sum + d.total, 0),
+        extra_youtube_uploads: summaryData.reduce((sum, d) => sum + (d.youtube_extra || 0), 0),
+        extra_instagram_uploads: summaryData.reduce((sum, d) => sum + (d.instagram_extra || 0), 0),
+        avg_youtube_per_day: summaryData.length > 0 ? summaryData.reduce((sum, d) => sum + d.youtube, 0) / summaryData.length : 0,
+        avg_instagram_per_day: summaryData.length > 0 ? summaryData.reduce((sum, d) => sum + d.instagram, 0) / summaryData.length : 0,
       },
     })
   } catch (error) {
