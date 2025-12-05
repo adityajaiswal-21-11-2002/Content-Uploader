@@ -107,17 +107,19 @@ export default function MonthlyLeaderboard({ month }: MonthlyLeaderboardProps) {
       <CardHeader className="cq-p-fluid-md">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-3 fluid-text-lg">
-              <div className="p-2 rounded-full bg-primary/10">
-                <TrendingUp className="w-5 h-5 text-primary" />
-              </div>
-              Monthly Leaderboard
-            </CardTitle>
-            <CardDescription className="fluid-text-sm">
-              {monthData
-                ? `Statistics for ${new Date(monthData + "-01").toLocaleDateString("en-US", { month: "long", year: "numeric" })}`
-                : "Current month statistics"}
-            </CardDescription>
+              <CardTitle className="flex items-center gap-3 fluid-text-lg">
+                <div className="p-2 rounded-full bg-primary/10">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                </div>
+                Monthly Leaderboard
+              </CardTitle>
+              <CardDescription className="fluid-text-sm">
+                {monthData
+                  ? `Statistics for ${new Date(monthData + "-01").toLocaleDateString("en-US", { month: "long", year: "numeric" })}`
+                  : "Current month statistics"}
+                <br />
+                <span className="text-green-600 dark:text-green-400 font-medium">Ranking includes mandatory uploads + extra videos</span>
+              </CardDescription>
           </div>
         </div>
       </CardHeader>

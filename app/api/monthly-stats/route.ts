@@ -111,6 +111,7 @@ export async function GET(request: Request) {
     )
 
     // Sort by total uploads (descending) for leaderboard
+    // total_uploads includes both mandatory and extra uploads
     monthlyStats.sort((a, b) => b.total_uploads - a.total_uploads)
 
     return Response.json({
