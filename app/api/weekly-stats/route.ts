@@ -37,6 +37,8 @@ export async function POST(request: Request) {
     const employeeIdNum = Number.parseInt(employeeId)
 
     const weekEnd = new Date(new Date(weekStart).getTime() + 7 * 24 * 60 * 60 * 1000)
+
+    // Get mandatory uploads
     const dailyUploads = await db
       .collection("daily_uploads")
       .find({
@@ -45,8 +47,26 @@ export async function POST(request: Request) {
       })
       .toArray()
 
-    const insta_count = dailyUploads.filter((u) => u.insta_done).length
-    const youtube_count = dailyUploads.filter((u) => u.youtube_done).length
+    // Get extra uploads for the week
+    const extraUploads = await db
+      .collection("extra_uploads")
+      .find({
+        employee_id: employeeIdNum,
+        date: { $gte: weekStart, $lt: formatDateISO(weekEnd) },
+      })
+      .toArray()
+
+    // Count mandatory uploads
+    const mandatoryInsta = dailyUploads.filter((u) => u.insta_done).length
+    const mandatoryYoutube = dailyUploads.filter((u) => u.youtube_done).length
+
+    // Count extra uploads
+    const extraInsta = extraUploads.filter((u) => u.platform === "instagram").length
+    const extraYoutube = extraUploads.filter((u) => u.platform === "youtube").length
+
+    // Total counts (mandatory + extra)
+    const insta_count = mandatoryInsta + extraInsta
+    const youtube_count = mandatoryYoutube + extraYoutube
 
     const result = await db.collection("weekly_stats").findOneAndUpdate(
       { employee_id: employeeIdNum, week_start_date: weekStart },
