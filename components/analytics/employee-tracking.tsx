@@ -14,6 +14,8 @@ interface EmployeeTrackingProps {
 }
 
 export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) {
+  console.log("EmployeeTracking component rendered with employeeId:", employeeId)
+
   const [employees, setEmployees] = useState<any[]>([])
   const [selectedEmployee, setSelectedEmployee] = useState<number | null>(employeeId || null)
   const [dailyData, setDailyData] = useState<any>(null)
@@ -238,10 +240,26 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
     )
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Employee Selector */}
-      {!employeeId && (
+  // Temporary simplified render for debugging
+  if (true) { // Force simplified view
+    return (
+      <div className="p-8 text-center">
+        <h2 className="text-2xl font-bold mb-4">Employee Tracking</h2>
+        <p className="text-muted-foreground mb-4">Component is loading...</p>
+        <div className="text-sm text-gray-500">
+          <p>Employee ID: {employeeId || 'None'}</p>
+          <p>Loading: {loading ? 'Yes' : 'No'}</p>
+          <p>Error: {error || 'None'}</p>
+        </div>
+      </div>
+    )
+  }
+
+  try {
+    return (
+      <div className="space-y-6">
+        {/* Employee Selector */}
+        {!employeeId && (
         <Card>
           <CardContent className="pt-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -620,5 +638,20 @@ export default function EmployeeTracking({ employeeId }: EmployeeTrackingProps) 
       )}
     </div>
   )
+  } catch (renderError) {
+    console.error("EmployeeTracking component render error:", renderError)
+    return (
+      <div className="text-center py-8 text-destructive">
+        <p className="text-lg font-semibold mb-2">Component Error</p>
+        <p>EmployeeTracking component failed to render. Please check the console for details.</p>
+        <details className="mt-4 text-left">
+          <summary className="cursor-pointer">Error Details</summary>
+          <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto">
+            {renderError instanceof Error ? renderError.message : String(renderError)}
+          </pre>
+        </details>
+      </div>
+    )
+  }
 }
 
